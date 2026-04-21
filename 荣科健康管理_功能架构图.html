@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>荣科AI健康管理平台 · 产品功能架构</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  background: #F2F3F5;
+  padding: 24px 20px 32px;
+  min-width: 1100px;
+}
+
+/* ── 标题 ── */
+.page-title {
+  text-align: center;
+  font-size: 19px;
+  font-weight: 700;
+  color: #1A202C;
+  margin-bottom: 18px;
+  letter-spacing: .4px;
+}
+
+/* ── 主体四列 ── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.92fr 1.4fr 1.05fr;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: start;
+}
+
+/* ── 列容器 ── */
+.col {
+  border-radius: 14px;
+  padding: 16px 14px 18px;
+}
+.col-patient  { background: #E6F4EF; }
+.col-family   { background: #EDE9F8; }
+.col-medical  { background: #E8F2FB; }
+.col-ops      { background: #FEF4E6; }
+
+/* ── 列标题 ── */
+.col-tag {
+  display: inline-block;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 7px; border-radius: 4px; margin-bottom: 5px;
+}
+.col-patient .col-tag  { background: #2D9C7A; color: #fff; }
+.col-family  .col-tag  { background: #6B46C1; color: #fff; }
+.col-medical .col-tag  { background: #2563A8; color: #fff; }
+.col-ops     .col-tag  { background: #C2620C; color: #fff; }
+
+.col-title {
+  font-size: 16px; font-weight: 700; margin-bottom: 2px;
+}
+.col-patient .col-title  { color: #145C40; }
+.col-family  .col-title  { color: #4A2A96; }
+.col-medical .col-title  { color: #1A3F72; }
+.col-ops     .col-title  { color: #7A3D10; }
+
+.col-subtitle {
+  font-size: 11.5px; margin-bottom: 14px;
+}
+.col-patient .col-subtitle  { color: #34A87E; }
+.col-family  .col-subtitle  { color: #7C55CC; }
+.col-medical .col-subtitle  { color: #3070B8; }
+.col-ops     .col-subtitle  { color: #C47030; }
+
+/* ── 分组标题 ── */
+.group {
+  margin-top: 13px;
+}
+.group:first-of-type { margin-top: 0; }
+.group-title {
+  font-size: 12.5px; font-weight: 700; color: #4A5568;
+  margin-bottom: 7px;
+}
+
+/* ── 功能条目 ── */
+.item {
+  background: #FFFFFF;
+  border-radius: 7px;
+  padding: 7px 11px;
+  margin-bottom: 5px;
+  font-size: 12.5px;
+  color: #2D3748;
+  display: flex; align-items: flex-start; gap: 7px;
+  line-height: 1.45;
+}
+.item:last-child { margin-bottom: 0; }
+.dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 4px;
+}
+.col-patient .dot  { background: #2D9C7A; }
+.col-family  .dot  { background: #6B46C1; }
+.col-ops     .dot  { background: #D4741A; }
+
+/* AI助手 特殊条目 */
+.item-ai {
+  background: #F0FBF7;
+  border: 1px solid #B2DFD0;
+  border-radius: 7px;
+  padding: 8px 11px;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #1A5C42;
+  line-height: 1.55;
+}
+.item-ai .ai-label {
+  font-weight: 700; font-size: 12px; color: #2D9C7A; margin-bottom: 3px;
+}
+.item-ai .ai-tags {
+  display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px;
+}
+.item-ai .tag {
+  background: #C8EDDF; color: #145C40;
+  font-size: 10.5px; padding: 2px 7px; border-radius: 10px;
+}
+
+/* ── 医护：双子列 ── */
+.medical-dual {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 9px;
+  margin-bottom: 0;
+}
+.sub-col {}
+.sub-header {
+  font-size: 11.5px; font-weight: 700; color: #fff;
+  background: #2563A8; border-radius: 6px;
+  padding: 5px 8px; text-align: center; margin-bottom: 7px;
+}
+.sub-header.alt { background: #3B82C4; }
+.col-medical .dot { background: #2563A8; }
+
+/* 医护：共用功能 */
+.shared-block {
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px dashed #B8D4EC;
+}
+.shared-items {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 5px;
+}
+
+/* ── 底部能力条 ── */
+.platform {
+  background: #E4E6EA;
+  border-radius: 12px;
+  padding: 13px 18px;
+}
+.platform-title {
+  font-size: 12.5px; font-weight: 700; color: #4A5568; margin-bottom: 10px;
+}
+.platform-items {
+  display: flex; gap: 9px; flex-wrap: wrap;
+}
+.platform-item {
+  background: #fff;
+  border-radius: 7px;
+  padding: 8px 16px;
+  font-size: 12.5px; color: #2D3748; font-weight: 500;
+  flex: 1; text-align: center; min-width: 110px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.07);
+}
+</style>
+</head>
+<body>
+
+<div class="page-title">荣科 AI 健康管理平台 · 产品功能架构</div>
+
+<div class="main-grid">
+
+<!-- ══════════════ C端：患者小程序 ══════════════ -->
+<div class="col col-patient">
+  <div class="col-tag">C端</div>
+  <div class="col-title">患者小程序</div>
+  <div class="col-subtitle">高风险 · 确诊 · 术后患者</div>
+
+  <div class="group">
+    <div class="group-title">入组与档案</div>
+    <div class="item"><span class="dot"></span>扫码绑定医生</div>
+    <div class="item"><span class="dot"></span>引导建档</div>
+    <div class="item"><span class="dot"></span>健康档案</div>
+    <div class="item"><span class="dot"></span>诊疗时间轴</div>
+    <div class="item"><span class="dot"></span>分层评估问卷</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">康复团队</div>
+    <div class="item"><span class="dot"></span>康复助手选择（陪伴 / 管家 / 守护版）</div>
+    <div class="item"><span class="dot"></span>服务路径查看</div>
+    <div class="item"><span class="dot"></span>服务包权益查看</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">日常随访</div>
+    <div class="item"><span class="dot"></span>症状自报（体温 / 疼痛 / 吞咽）</div>
+    <div class="item"><span class="dot"></span>体重记录与趋势</div>
+    <div class="item"><span class="dot"></span>饮食打卡（拍照 / 文字）</div>
+    <div class="item"><span class="dot"></span>检查报告上传（OCR 识别）</div>
+    <div class="item"><span class="dot"></span>指标录入（血压 / 血糖等）</div>
+    <div class="item"><span class="dot"></span>智能提醒与打卡签到</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">AI 助手对话</div>
+    <div class="item-ai">
+      <div class="ai-label">小荣 · 24h 全程陪伴</div>
+      按时推送 · 即时反馈 · 转人工服务
+      <div class="ai-tags">
+        <span class="tag">营养饮食</span>
+        <span class="tag">症状监测</span>
+        <span class="tag">随访跟进</span>
+        <span class="tag">心理健康</span>
+        <span class="tag">用药提醒</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">数字分身</div>
+    <div class="item"><span class="dot"></span>健康养成状态</div>
+    <div class="item"><span class="dot"></span>三维健康指数（营养 / 康复 / 心理）</div>
+    <div class="item"><span class="dot"></span>成就徽章系统</div>
+    <div class="item"><span class="dot"></span>健康周报 / 月报</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">咨询与服务</div>
+    <div class="item"><span class="dot"></span>健康宣教浏览</div>
+  </div>
+</div>
+
+<!-- ══════════════ C端：家属小程序 ══════════════ -->
+<div class="col col-family">
+  <div class="col-tag">C端</div>
+  <div class="col-title">家属小程序</div>
+  <div class="col-subtitle">患者家属 · 主要照护者</div>
+
+  <div class="group">
+    <div class="group-title">绑定与关联</div>
+    <div class="item"><span class="dot"></span>家属绑定患者账号</div>
+    <div class="item"><span class="dot"></span>代患者操作模式</div>
+    <div class="item"><span class="dot"></span>家庭健康圈管理</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">每日健康摘要</div>
+    <div class="item"><span class="dot"></span>患者今日状态推送</div>
+    <div class="item"><span class="dot"></span>打卡完成情况查看</div>
+    <div class="item"><span class="dot"></span>关键指标一览</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">异常预警通知</div>
+    <div class="item"><span class="dot"></span>异常指标实时提醒</div>
+    <div class="item"><span class="dot"></span>复查前双重提醒</div>
+    <div class="item"><span class="dot"></span>连续未打卡预警</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">护理指导</div>
+    <div class="item"><span class="dot"></span>分阶段家属照护指南</div>
+    <div class="item"><span class="dot"></span>今日饮食制作建议</div>
+    <div class="item"><span class="dot"></span>患者沟通技巧指导</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">家属助理</div>
+    <div class="item"><span class="dot"></span>护理问答</div>
+    <div class="item"><span class="dot"></span>家属情绪疏导</div>
+    <div class="item"><span class="dot"></span>照护打卡记录</div>
+  </div>
+</div>
+
+<!-- ══════════════ B端：医护健康工作台 ══════════════ -->
+<div class="col col-medical">
+  <div class="col-tag">B端</div>
+  <div class="col-title">医护健康工作台</div>
+  <div class="col-subtitle">医生 · 个案管理师 · 健康管理师</div>
+
+  <div class="medical-dual">
+    <!-- 医生 -->
+    <div class="sub-col">
+      <div class="sub-header">医生</div>
+      <div class="group-title" style="margin-top:0">患者管理</div>
+      <div class="item"><span class="dot"></span>干预方案制定 / 调整</div>
+      <div class="item"><span class="dot"></span>异常指标处理</div>
+      <div class="item"><span class="dot"></span>MDT 协作会诊</div>
+      <div class="item"><span class="dot"></span>阶段报告审阅</div>
+      <div class="item"><span class="dot"></span>复诊结果解读</div>
+
+      <div class="group-title" style="margin-top:12px">AI 审核队列</div>
+      <div class="item"><span class="dot"></span>Disease Skill 方案审核确认</div>
+      <div class="item"><span class="dot"></span>患者分层结果确认</div>
+      <div class="item"><span class="dot"></span>方案优化建议审批</div>
+      <div class="item"><span class="dot"></span>L2 随访内容审核推送</div>
+    </div>
+
+    <!-- 个案/健管师 -->
+    <div class="sub-col">
+      <div class="sub-header alt">个案 / 健管师</div>
+      <div class="group-title" style="margin-top:0">患者执行</div>
+      <div class="item"><span class="dot"></span>患者列表（按风险排序）</div>
+      <div class="item"><span class="dot"></span>入组评估执行</div>
+      <div class="item"><span class="dot"></span>随访任务督办</div>
+      <div class="item"><span class="dot"></span>预警跟进处理</div>
+      <div class="item"><span class="dot"></span>在线咨询服务</div>
+
+      <div class="group-title" style="margin-top:12px">转化与跟进</div>
+      <div class="item"><span class="dot"></span>超期人工督办</div>
+      <div class="item"><span class="dot"></span>服务包转化引导</div>
+      <div class="item"><span class="dot"></span>家属联系跟进</div>
+    </div>
+  </div>
+
+  <!-- 共用功能 -->
+  <div class="shared-block">
+    <div class="group-title">共用功能</div>
+    <div class="shared-items">
+      <div class="item"><span class="dot"></span>患者列表 / 管理记录</div>
+      <div class="item"><span class="dot"></span>医患即时沟通</div>
+      <div class="item"><span class="dot"></span>患者标签管理</div>
+      <div class="item"><span class="dot"></span>家属联系记录</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 管理端：运营管理后台 ══════════════ -->
+<div class="col col-ops">
+  <div class="col-tag">管理端</div>
+  <div class="col-title">运营管理后台</div>
+  <div class="col-subtitle">运营团队 · 系统管理员</div>
+
+  <div class="group">
+    <div class="group-title">AI 与业务配置</div>
+    <div class="item"><span class="dot"></span>Disease Skill 方案触发与版本管理</div>
+    <div class="item"><span class="dot"></span>用户分层规则配置</div>
+    <div class="item"><span class="dot"></span>督办规则引擎配置（规则 + 人工）</div>
+    <div class="item"><span class="dot"></span>推送策略管理（频次 / 时段 / 防骚扰）</div>
+    <div class="item"><span class="dot"></span>表单 / 量表管理</div>
+    <div class="item"><span class="dot"></span>服务包权益设置</div>
+    <div class="item"><span class="dot"></span>知识内容库管理</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">AI Agent 管理</div>
+    <div class="item"><span class="dot"></span>Agent 调用日志查看</div>
+    <div class="item"><span class="dot"></span>方案生成质量监控</div>
+    <div class="item"><span class="dot"></span>模型版本管理</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">数据与运营</div>
+    <div class="item"><span class="dot"></span>数据统计看板</div>
+    <div class="item"><span class="dot"></span>绩效考核报表</div>
+    <div class="item"><span class="dot"></span>投入产出分析</div>
+    <div class="item"><span class="dot"></span>付费转化漏斗</div>
+    <div class="item"><span class="dot"></span>用户依从性分析</div>
+  </div>
+
+  <div class="group">
+    <div class="group-title">系统管理</div>
+    <div class="item"><span class="dot"></span>账号权限管理</div>
+    <div class="item"><span class="dot"></span>团队组织配置</div>
+    <div class="item"><span class="dot"></span>渠道对接配置</div>
+  </div>
+</div>
+
+</div><!-- /main-grid -->
+
+<!-- ══════════════ 底层平台基础能力 ══════════════ -->
+<div class="platform">
+  <div class="platform-title">底层平台基础能力</div>
+  <div class="platform-items">
+    <div class="platform-item">AI Agent 编排引擎</div>
+    <div class="platform-item">智能预警引擎</div>
+    <div class="platform-item">OCR 报告识别</div>
+    <div class="platform-item">消息推送通知</div>
+    <div class="platform-item">大模型 AI 助手</div>
+    <div class="platform-item">向量知识库（RAG）</div>
+    <div class="platform-item">院内系统对接</div>
+  </div>
+</div>
+
+</body>
+</html>
