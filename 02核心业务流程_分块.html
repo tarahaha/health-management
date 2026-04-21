@@ -1,668 +1,793 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>荣科健康管理平台 · 业务流程图</title>
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>荣科健康管理平台 · 业务流程图</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-  font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', sans-serif;
-  background: #EEF2F7;
-  padding: 32px 24px;
-}
+    body {
+      font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', sans-serif;
+      background: #EEF2F7;
+      padding: 32px 24px;
+    }
 
-.page {
-  background: white;
-  border-radius: 20px;
-  padding: 48px 48px 40px;
-  box-shadow: 0 8px 40px rgba(10,46,60,0.10);
-  max-width: 1480px;
-  margin: 0 auto;
-}
+    .page {
+      background: white;
+      border-radius: 20px;
+      padding: 48px 48px 40px;
+      box-shadow: 0 8px 40px rgba(10, 46, 60, 0.10);
+      max-width: 1480px;
+      margin: 0 auto;
+    }
 
-/* ── Header ── */
-.header {
-  text-align: center;
-  margin-bottom: 36px;
-}
-.header-tag {
-  display: inline-block;
-  background: #0D7490;
-  color: white;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  padding: 4px 16px;
-  border-radius: 20px;
-  margin-bottom: 14px;
-}
-.header h1 {
-  font-size: 30px;
-  color: #0A2E3C;
-  font-weight: 800;
-  margin-bottom: 8px;
-  letter-spacing: 1px;
-}
-.header p {
-  font-size: 14px;
-  color: #64748B;
-  letter-spacing: 0.5px;
-}
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
 
-/* ── Legend ── */
-.legend {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  margin-bottom: 36px;
-  flex-wrap: wrap;
-}
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 12.5px;
-  color: #475569;
-  font-weight: 500;
-}
-.legend-dot {
-  width: 28px;
-  height: 22px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-}
-.ld-ai    { background: #DBEAFE; border: 1.5px solid #3B82F6; }
-.ld-human { background: #FEF3C7; border: 1.5px solid #F59E0B; }
-.ld-user  { background: #D1FAE5; border: 1.5px solid #10B981; }
-.ld-sys   { background: #F1F5F9; border: 1.5px solid #94A3B8; }
-.ld-key   { background: #FCE7F3; border: 1.5px solid #EC4899; }
+    .header-tag {
+      display: inline-block;
+      background: #0D7490;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 4px 16px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
 
-/* ── Swimlane container ── */
-.swimlane {
-  display: flex;
-  margin-bottom: 16px;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1.5px solid #E2E8F0;
-  min-height: 100px;
-}
+    .header h1 {
+      font-size: 30px;
+      color: #0A2E3C;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
 
-/* ── Lane label (left column) ── */
-.lane-label {
-  width: 108px;
-  min-width: 108px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 18px 10px;
-  text-align: center;
-  flex-shrink: 0;
-}
-.line-code {
-  font-size: 22px;
-  font-weight: 900;
-  margin-bottom: 5px;
-  letter-spacing: -0.5px;
-}
-.line-name {
-  font-size: 12.5px;
-  font-weight: 700;
-  line-height: 1.5;
-}
-.line-sub {
-  font-size: 10.5px;
-  margin-top: 5px;
-  opacity: 0.82;
-  line-height: 1.4;
-}
+    .header p {
+      font-size: 14px;
+      color: #64748B;
+      letter-spacing: 0.5px;
+    }
 
-/* ── Lane content ── */
-.lane-content {
-  flex: 1;
-  padding: 18px 20px;
-  background: #FAFCFF;
-}
+    /* ── Legend ── */
+    .legend {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
 
-/* ── Step row ── */
-.steps-row {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex-wrap: nowrap;
-}
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12.5px;
+      color: #475569;
+      font-weight: 500;
+    }
 
-/* ── Single step card ── */
-.step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 10px;
-  padding: 10px 12px;
-  min-width: 104px;
-  max-width: 130px;
-  border: 1.5px solid #E2E8F0;
-  background: white;
-  flex-shrink: 0;
-  position: relative;
-}
-.step-badge {
-  font-size: 10px;
-  padding: 2px 9px;
-  border-radius: 20px;
-  margin-bottom: 6px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-.step-icon {
-  font-size: 18px;
-  margin-bottom: 4px;
-}
-.step-title {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #1E293B;
-  text-align: center;
-  line-height: 1.45;
-}
-.step-desc {
-  font-size: 10px;
-  color: #64748B;
-  text-align: center;
-  margin-top: 4px;
-  line-height: 1.35;
-}
+    .legend-dot {
+      width: 28px;
+      height: 22px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
 
-/* Step type styles */
-.step.s-ai     { border-color: #93C5FD; background: #F0F7FF; }
-.step.s-human  { border-color: #FCD34D; background: #FFFBF0; }
-.step.s-user   { border-color: #6EE7B7; background: #F0FDF9; }
-.step.s-sys    { border-color: #CBD5E1; background: #F8FAFC; }
-.step.s-key    { border-color: #F9A8D4; background: #FFF0F7; box-shadow: 0 2px 10px rgba(236,72,153,0.18); }
+    .ld-ai {
+      background: #DBEAFE;
+      border: 1.5px solid #3B82F6;
+    }
 
-/* Badge colors */
-.b-ai    { background: #DBEAFE; color: #1D4ED8; }
-.b-human { background: #FEF3C7; color: #92400E; }
-.b-user  { background: #D1FAE5; color: #065F46; }
-.b-sys   { background: #F1F5F9; color: #475569; }
-.b-key   { background: #FCE7F3; color: #9D174D; }
+    .ld-human {
+      background: #FEF3C7;
+      border: 1.5px solid #F59E0B;
+    }
 
-/* Arrow between steps */
-.arr {
-  font-size: 18px;
-  color: #CBD5E1;
-  padding: 0 4px;
-  flex-shrink: 0;
-  line-height: 1;
-}
-.arr-down {
-  display: block;
-  text-align: center;
-  font-size: 16px;
-  color: #CBD5E1;
-  margin: 4px 0;
-}
+    .ld-user {
+      background: #D1FAE5;
+      border: 1.5px solid #10B981;
+    }
 
-/* ── C线 multi-tier layout ── */
-.tier-block {
-  display: flex;
-  align-items: stretch;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-.tier-block:last-child { margin-bottom: 0; }
+    .ld-sys {
+      background: #F1F5F9;
+      border: 1.5px solid #94A3B8;
+    }
 
-.tier-tag {
-  width: 72px;
-  min-width: 72px;
-  border-radius: 9px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 6px;
-  text-align: center;
-  flex-shrink: 0;
-}
-.tier-tag .tc { font-size: 17px; font-weight: 900; }
-.tier-tag .tn { font-size: 9.5px; font-weight: 600; margin-top: 3px; line-height: 1.3; }
+    .ld-key {
+      background: #FCE7F3;
+      border: 1.5px solid #EC4899;
+    }
 
-.t-L1 { background: #DBEAFE; color: #1E40AF; }
-.t-L2 { background: #FEF3C7; color: #92400E; }
-.t-L3 { background: #FCE7F3; color: #9D174D; }
+    /* ── Swimlane container ── */
+    .swimlane {
+      display: flex;
+      margin-bottom: 16px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1.5px solid #E2E8F0;
+      min-height: 100px;
+    }
 
-.tier-steps {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 0;
-}
+    /* ── Lane label (left column) ── */
+    .lane-label {
+      width: 108px;
+      min-width: 108px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 10px;
+      text-align: center;
+      flex-shrink: 0;
+    }
 
-/* ── Lane color themes ── */
-.lane-A .lane-label { background: linear-gradient(160deg, #0B4F6C 0%, #0D7490 100%); color: white; }
-.lane-B .lane-label { background: linear-gradient(160deg, #065A82 0%, #0FA3B1 100%); color: white; }
-.lane-C .lane-label { background: linear-gradient(160deg, #047857 0%, #06D6A0 100%); color: #0A2E3C; }
-.lane-D .lane-label { background: linear-gradient(160deg, #C05621 0%, #F4762E 100%); color: white; }
+    .line-code {
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 5px;
+      letter-spacing: -0.5px;
+    }
 
-/* ── Inter-lane connector ── */
-.connector {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: 6px 0;
-  color: #94A3B8;
-  font-size: 11.5px;
-}
-.connector::before, .connector::after {
-  content: '';
-  flex: 1;
-  max-width: 200px;
-  height: 1px;
-  background: linear-gradient(to right, transparent, #CBD5E1);
-}
-.connector::after {
-  background: linear-gradient(to left, transparent, #CBD5E1);
-}
-.connector-text {
-  background: #F1F5F9;
-  border: 1px solid #E2E8F0;
-  padding: 3px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  color: #64748B;
-  white-space: nowrap;
-}
+    .line-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
 
-/* ── Footer ── */
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 32px;
-  padding-top: 20px;
-  border-top: 1px solid #E2E8F0;
-  font-size: 11.5px;
-  color: #94A3B8;
-}
-.footer-note {
-  display: flex;
-  gap: 20px;
-}
-.footer-note span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
+    .line-sub {
+      font-size: 10.5px;
+      margin-top: 5px;
+      opacity: 0.82;
+      line-height: 1.4;
+    }
 
-/* ── Print ── */
-@media print {
-  body { background: white; padding: 0; }
-  .page { box-shadow: none; border-radius: 0; padding: 30px; }
-}
-</style>
+    /* ── Lane content ── */
+    .lane-content {
+      flex: 1;
+      padding: 18px 20px;
+      background: #FAFCFF;
+    }
+
+    /* ── Step row ── */
+    .steps-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: nowrap;
+    }
+
+    /* ── Single step card ── */
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-radius: 10px;
+      padding: 10px 12px;
+      min-width: 104px;
+      max-width: 130px;
+      border: 1.5px solid #E2E8F0;
+      background: white;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .step-badge {
+      font-size: 10px;
+      padding: 2px 9px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .step-icon {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .step-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #1E293B;
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .step-desc {
+      font-size: 10px;
+      color: #64748B;
+      text-align: center;
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    /* Step type styles */
+    .step.s-ai {
+      border-color: #93C5FD;
+      background: #F0F7FF;
+    }
+
+    .step.s-human {
+      border-color: #FCD34D;
+      background: #FFFBF0;
+    }
+
+    .step.s-user {
+      border-color: #6EE7B7;
+      background: #F0FDF9;
+    }
+
+    .step.s-sys {
+      border-color: #CBD5E1;
+      background: #F8FAFC;
+    }
+
+    .step.s-key {
+      border-color: #F9A8D4;
+      background: #FFF0F7;
+      box-shadow: 0 2px 10px rgba(236, 72, 153, 0.18);
+    }
+
+    /* Badge colors */
+    .b-ai {
+      background: #DBEAFE;
+      color: #1D4ED8;
+    }
+
+    .b-human {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .b-user {
+      background: #D1FAE5;
+      color: #065F46;
+    }
+
+    .b-sys {
+      background: #F1F5F9;
+      color: #475569;
+    }
+
+    .b-key {
+      background: #FCE7F3;
+      color: #9D174D;
+    }
+
+    /* Arrow between steps */
+    .arr {
+      font-size: 18px;
+      color: #CBD5E1;
+      padding: 0 4px;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .arr-down {
+      display: block;
+      text-align: center;
+      font-size: 16px;
+      color: #CBD5E1;
+      margin: 4px 0;
+    }
+
+    /* ── C线 multi-tier layout ── */
+    .tier-block {
+      display: flex;
+      align-items: stretch;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .tier-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .tier-tag {
+      width: 72px;
+      min-width: 72px;
+      border-radius: 9px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 6px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .tier-tag .tc {
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .tier-tag .tn {
+      font-size: 9.5px;
+      font-weight: 600;
+      margin-top: 3px;
+      line-height: 1.3;
+    }
+
+    .t-L1 {
+      background: #DBEAFE;
+      color: #1E40AF;
+    }
+
+    .t-L2 {
+      background: #FEF3C7;
+      color: #92400E;
+    }
+
+    .t-L3 {
+      background: #FCE7F3;
+      color: #9D174D;
+    }
+
+    .tier-steps {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* ── Lane color themes ── */
+    .lane-A .lane-label {
+      background: linear-gradient(160deg, #0B4F6C 0%, #0D7490 100%);
+      color: white;
+    }
+
+    .lane-B .lane-label {
+      background: linear-gradient(160deg, #065A82 0%, #0FA3B1 100%);
+      color: white;
+    }
+
+    .lane-C .lane-label {
+      background: linear-gradient(160deg, #047857 0%, #06D6A0 100%);
+      color: #0A2E3C;
+    }
+
+    .lane-D .lane-label {
+      background: linear-gradient(160deg, #C05621 0%, #F4762E 100%);
+      color: white;
+    }
+
+    /* ── Inter-lane connector ── */
+    .connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 6px 0;
+      color: #94A3B8;
+      font-size: 11.5px;
+    }
+
+    .connector::before,
+    .connector::after {
+      content: '';
+      flex: 1;
+      max-width: 200px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #CBD5E1);
+    }
+
+    .connector::after {
+      background: linear-gradient(to left, transparent, #CBD5E1);
+    }
+
+    .connector-text {
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      color: #64748B;
+      white-space: nowrap;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid #E2E8F0;
+      font-size: 11.5px;
+      color: #94A3B8;
+    }
+
+    .footer-note {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-note span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+
+      .page {
+        box-shadow: none;
+        border-radius: 0;
+        padding: 30px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="page">
+  <div class="page">
 
-  <!-- Header -->
-  <div class="header">
-    <div class="header-tag">RONGKE HEALTH · 业务流程架构</div>
-    <h1>荣科健康管理平台 · 全流程业务图</h1>
-    <p>AI驱动规划 &nbsp;·&nbsp; 医生确认关键节点 &nbsp;·&nbsp; 千人千面执行 &nbsp;·&nbsp; 数据闭环优化</p>
-  </div>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-tag">RONGKE HEALTH · 业务流程架构</div>
+      <h1>荣科健康管理平台 · 全流程业务图</h1>
+      <p>AI驱动规划 &nbsp;·&nbsp; 医生确认关键节点 &nbsp;·&nbsp; 千人千面执行 &nbsp;·&nbsp; 数据闭环优化</p>
+    </div>
 
-  <!-- Legend -->
-  <div class="legend">
-    <div class="legend-item">
-      <div class="legend-dot ld-ai">🤖</div><span>AI自动处理</span>
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot ld-ai">🤖</div><span>AI自动处理</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot ld-human">👨‍⚕️</div><span>医生/人工确认</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot ld-user">👤</div><span>用户操作</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot ld-sys">⚙️</div><span>系统自动执行</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot ld-key">🔑</div><span>关键决策节点</span>
+      </div>
     </div>
-    <div class="legend-item">
-      <div class="legend-dot ld-human">👨‍⚕️</div><span>医生/人工确认</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot ld-user">👤</div><span>用户操作</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot ld-sys">⚙️</div><span>系统自动执行</span>
-    </div>
-    <div class="legend-item">
-      <div class="legend-dot ld-key">🔑</div><span>关键决策节点</span>
-    </div>
-  </div>
 
-  <!-- ═══════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════
        A线：病种方案规划
   ═══════════════════════════════════════════════════ -->
-  <div class="swimlane lane-A">
-    <div class="lane-label">
-      <div class="line-code">A线</div>
-      <div class="line-name">病种方案<br>规划</div>
-      <div class="line-sub">Disease<br>Planning</div>
-    </div>
-    <div class="lane-content">
-      <div class="steps-row">
+    <div class="swimlane lane-A">
+      <div class="lane-label">
+        <div class="line-code">A线</div>
+        <div class="line-name">病种方案<br>规划</div>
+        <div class="line-sub">Disease<br>Planning</div>
+      </div>
+      <div class="lane-content">
+        <div class="steps-row">
 
-        <div class="step s-sys">
-          <span class="step-badge b-sys">⚙️ 系统</span>
-          <div class="step-title">运营提需</div>
-          <div class="step-desc">选定病种<br>设定规划目标</div>
+          <div class="step s-sys">
+            <span class="step-badge b-sys">⚙️ 系统</span>
+            <div class="step-title">运营提需</div>
+            <div class="step-desc">选定病种<br>设定规划目标</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-ai">
+            <span class="step-badge b-ai">🤖 AI</span>
+            <div class="step-title">文献检索</div>
+            <div class="step-desc">检索指南/文献<br>证据等级标注</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-ai">
+            <span class="step-badge b-ai">🤖 AI</span>
+            <div class="step-title">生成初版方案</div>
+            <div class="step-desc">分层标准初版<br>服务内容草稿</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-key">
+            <span class="step-badge b-key">🔑 关键</span>
+            <div class="step-title">医生审核确认</div>
+            <div class="step-desc">确认分层标准<br>修改服务内容</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-human">
+            <span class="step-badge b-human">👨‍⚕️ 协作</span>
+            <div class="step-title">人机协作修订</div>
+            <div class="step-desc">AI自动融合<br>医生意见迭代</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-key">
+            <span class="step-badge b-key">🔑 关键</span>
+            <div class="step-title">方案定版</div>
+            <div class="step-desc">医生最终签发<br>基础+付费分层</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-sys">
+            <span class="step-badge b-sys">⚙️ 系统</span>
+            <div class="step-title">Disease Skill<br>归档发布</div>
+            <div class="step-desc">版本化存储<br>供执行线调用</div>
+          </div>
+
         </div>
-        <span class="arr">→</span>
-
-        <div class="step s-ai">
-          <span class="step-badge b-ai">🤖 AI</span>
-          <div class="step-title">文献检索</div>
-          <div class="step-desc">检索指南/文献<br>证据等级标注</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-ai">
-          <span class="step-badge b-ai">🤖 AI</span>
-          <div class="step-title">生成初版方案</div>
-          <div class="step-desc">分层标准初版<br>服务内容草稿</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-key">
-          <span class="step-badge b-key">🔑 关键</span>
-          <div class="step-title">医生审核确认</div>
-          <div class="step-desc">确认分层标准<br>修改服务内容</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-human">
-          <span class="step-badge b-human">👨‍⚕️ 协作</span>
-          <div class="step-title">人机协作修订</div>
-          <div class="step-desc">AI自动融合<br>医生意见迭代</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-key">
-          <span class="step-badge b-key">🔑 关键</span>
-          <div class="step-title">方案定版</div>
-          <div class="step-desc">医生最终签发<br>基础+付费分层</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-sys">
-          <span class="step-badge b-sys">⚙️ 系统</span>
-          <div class="step-title">Disease Skill<br>归档发布</div>
-          <div class="step-desc">版本化存储<br>供执行线调用</div>
-        </div>
-
       </div>
     </div>
-  </div>
 
-  <div class="connector">
-    <span class="connector-text">▼ Disease Skill 方案下发至用户入组及执行环节</span>
-  </div>
+    <div class="connector">
+      <span class="connector-text">▼ Disease Skill 方案下发至用户入组及执行环节</span>
+    </div>
 
-  <!-- ═══════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════
        B线：用户入组
   ═══════════════════════════════════════════════════ -->
-  <div class="swimlane lane-B">
-    <div class="lane-label">
-      <div class="line-code">B线</div>
-      <div class="line-name">用户入组</div>
-      <div class="line-sub">Enrollment</div>
-    </div>
-    <div class="lane-content">
-      <div class="steps-row">
+    <div class="swimlane lane-B">
+      <div class="lane-label">
+        <div class="line-code">B线</div>
+        <div class="line-name">用户入组</div>
+        <div class="line-sub">Enrollment</div>
+      </div>
+      <div class="lane-content">
+        <div class="steps-row">
 
-        <div class="step s-user">
-          <span class="step-badge b-user">👤 用户</span>
-          <div class="step-title">渠道获客</div>
-          <div class="step-desc">线上/线下<br>医院/社区入口</div>
+          <div class="step s-user">
+            <span class="step-badge b-user">👤 用户</span>
+            <div class="step-title">渠道获客</div>
+            <div class="step-desc">线上/线下<br>医院/社区入口</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-user">
+            <span class="step-badge b-user">👤 用户</span>
+            <div class="step-title">C端建档</div>
+            <div class="step-desc">基本信息<br>检查报告上传</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-ai">
+            <span class="step-badge b-ai">🤖 AI</span>
+            <div class="step-title">智能分层</div>
+            <div class="step-desc">依据报告数据<br>生成分层初版</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-key">
+            <span class="step-badge b-key">🔑 关键</span>
+            <div class="step-title">医生确认分层</div>
+            <div class="step-desc">最终确定<br>（可配置是否需要医生确认）</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-ai">
+            <span class="step-badge b-ai">🤖 AI</span>
+            <div class="step-title">推送基础/付费服务</div>
+            <div class="step-desc">个性化增值<br>服务智能推荐</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-sys">
+            <span class="step-badge b-sys">⚙️ 系统</span>
+            <div class="step-title">正式入组</div>
+            <div class="step-desc">激活管理方案<br>进入执行阶段</div>
+          </div>
+
         </div>
-        <span class="arr">→</span>
-
-        <div class="step s-user">
-          <span class="step-badge b-user">👤 用户</span>
-          <div class="step-title">C端建档</div>
-          <div class="step-desc">基本信息<br>检查报告上传</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-ai">
-          <span class="step-badge b-ai">🤖 AI</span>
-          <div class="step-title">智能分层</div>
-          <div class="step-desc">依据报告数据<br>生成分层初版</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-key">
-          <span class="step-badge b-key">🔑 关键</span>
-          <div class="step-title">医生确认分层</div>
-          <div class="step-desc">最终确定<br>轻/中/重度分级</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-sys">
-          <span class="step-badge b-sys">⚙️ 系统</span>
-          <div class="step-title">推送基础服务</div>
-          <div class="step-desc">免费标准服务<br>自动触达推送</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-ai">
-          <span class="step-badge b-ai">🤖 AI</span>
-          <div class="step-title">推荐付费服务</div>
-          <div class="step-desc">个性化增值<br>服务智能推荐</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-sys">
-          <span class="step-badge b-sys">⚙️ 系统</span>
-          <div class="step-title">正式入组</div>
-          <div class="step-desc">激活管理方案<br>进入执行阶段</div>
-        </div>
-
       </div>
     </div>
-  </div>
 
-  <div class="connector">
-    <span class="connector-text">▼ 患者入组完成，进入个性化方案执行</span>
-  </div>
+    <div class="connector">
+      <span class="connector-text">▼ 患者入组完成，进入个性化方案执行</span>
+    </div>
 
-  <!-- ═══════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════
        C线：方案执行（L1/L2/L3）
   ═══════════════════════════════════════════════════ -->
-  <div class="swimlane lane-C">
-    <div class="lane-label">
-      <div class="line-code">C线</div>
-      <div class="line-name">方案执行</div>
-      <div class="line-sub">Execution<br>L1 / L2 / L3</div>
+    <div class="swimlane lane-C">
+      <div class="lane-label">
+        <div class="line-code">C线</div>
+        <div class="line-name">方案执行</div>
+        <div class="line-sub">Execution<br>L1 / L2 / L3</div>
+      </div>
+      <div class="lane-content">
+
+        <!-- L1 -->
+        <div class="tier-block">
+          <div class="tier-tag t-L1">
+            <div class="tc">L1</div>
+            <div class="tn">全自动<br>执行</div>
+          </div>
+          <div class="tier-steps">
+            <div class="step s-ai" style="min-width:118px;">
+              <span class="step-badge b-ai">🤖 AI</span>
+              <div class="step-title">AI定时触发提醒</div>
+              <div class="step-desc">用药/复诊/复查<br>个性化推送</div>
+            </div>
+            <span class="arr">→</span>
+            <div class="step s-user" style="min-width:110px;">
+              <span class="step-badge b-user">👤 用户</span>
+              <div class="step-title">用户响应执行</div>
+              <div class="step-desc">打卡/填写<br>问卷/上传数据</div>
+            </div>
+            <span class="arr">→</span>
+            <div class="step s-sys" style="min-width:110px;">
+              <span class="step-badge b-sys">⚙️ 系统</span>
+              <div class="step-title">自动记录归档</div>
+              <div class="step-desc">数据入库<br>进度实时更新</div>
+            </div>
+            <span class="arr">→</span>
+            <div class="step s-ai" style="min-width:118px;">
+              <span class="step-badge b-ai">🤖 AI</span>
+              <div class="step-title">AI过期督办</div>
+              <div class="step-desc">规则触发+<br>可人工配置</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- L2 -->
+        <div class="tier-block">
+          <div class="tier-tag t-L2">
+            <div class="tc">L2</div>
+            <div class="tn">AI+人工<br>确认</div>
+          </div>
+          <div class="tier-steps">
+            <div class="step s-ai" style="min-width:118px;">
+              <span class="step-badge b-ai">🤖 AI</span>
+              <div class="step-title">AI生成服务内容</div>
+              <div class="step-desc">个性化方案<br>随访内容草稿</div>
+            </div>
+            <span class="arr">→</span>
+            <div class="step s-key" style="min-width:118px;">
+              <span class="step-badge b-key">🔑 关键</span>
+              <div class="step-title">人工审核推送</div>
+              <div class="step-desc">医生/护士审核<br>修改后推送</div>
+            </div>
+            <span class="arr">→</span>
+            <div class="step s-user" style="min-width:110px;">
+              <span class="step-badge b-user">👤 用户</span>
+              <div class="step-title">用户接收执行</div>
+              <div class="step-desc">响应随访<br>上传指标数据</div>
+            </div>
+            <span class="arr">→</span>
+            <div class="step s-sys" style="min-width:110px;">
+              <span class="step-badge b-sys">⚙️ 系统</span>
+              <div class="step-title">记录追踪</div>
+              <div class="step-desc">执行率统计<br>督办闭环跟进</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- L3 -->
+        <div class="tier-block">
+          <div class="tier-tag t-L3">
+            <div class="tc">L3</div>
+            <div class="tn">人工主导<br>AI辅助</div>
+          </div>
+          <div class="tier-steps">
+            <div class="step s-human" style="min-width:118px;">
+              <span class="step-badge b-human">👨‍⚕️ 人工</span>
+              <div class="step-title">人工创建任务</div>
+              <div class="step-desc">医生/护士<br>主动发起服务</div>
+            </div>
+            <span class="arr">→</span>
+            <div class="step s-ai" style="min-width:118px;">
+              <span class="step-badge b-ai">🤖 AI</span>
+              <div class="step-title">AI辅助建议</div>
+              <div class="step-desc">参考建议/模板<br>历史对比分析</div>
+            </div>
+            <span class="arr">→</span>
+            <div class="step s-user" style="min-width:110px;">
+              <span class="step-badge b-user">👤 用户</span>
+              <div class="step-title">线下/线上执行</div>
+              <div class="step-desc">复诊/会诊<br>高级干预服务</div>
+            </div>
+            <span class="arr">→</span>
+            <div class="step s-human" style="min-width:110px;">
+              <span class="step-badge b-human">👨‍⚕️ 人工</span>
+              <div class="step-title">督办跟进</div>
+              <div class="step-desc">执行结果记录<br>人工闭环处理</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-    <div class="lane-content">
 
-      <!-- L1 -->
-      <div class="tier-block">
-        <div class="tier-tag t-L1">
-          <div class="tc">L1</div>
-          <div class="tn">全自动<br>执行</div>
-        </div>
-        <div class="tier-steps">
-          <div class="step s-ai" style="min-width:118px;">
-            <span class="step-badge b-ai">🤖 AI</span>
-            <div class="step-title">AI定时触发提醒</div>
-            <div class="step-desc">用药/复诊/复查<br>个性化推送</div>
-          </div>
-          <span class="arr">→</span>
-          <div class="step s-user" style="min-width:110px;">
-            <span class="step-badge b-user">👤 用户</span>
-            <div class="step-title">用户响应执行</div>
-            <div class="step-desc">打卡/填写<br>问卷/上传数据</div>
-          </div>
-          <span class="arr">→</span>
-          <div class="step s-sys" style="min-width:110px;">
-            <span class="step-badge b-sys">⚙️ 系统</span>
-            <div class="step-title">自动记录归档</div>
-            <div class="step-desc">数据入库<br>进度实时更新</div>
-          </div>
-          <span class="arr">→</span>
-          <div class="step s-ai" style="min-width:118px;">
-            <span class="step-badge b-ai">🤖 AI</span>
-            <div class="step-title">AI过期督办</div>
-            <div class="step-desc">规则触发+<br>可人工配置</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- L2 -->
-      <div class="tier-block">
-        <div class="tier-tag t-L2">
-          <div class="tc">L2</div>
-          <div class="tn">AI+人工<br>确认</div>
-        </div>
-        <div class="tier-steps">
-          <div class="step s-ai" style="min-width:118px;">
-            <span class="step-badge b-ai">🤖 AI</span>
-            <div class="step-title">AI生成服务内容</div>
-            <div class="step-desc">个性化方案<br>随访内容草稿</div>
-          </div>
-          <span class="arr">→</span>
-          <div class="step s-key" style="min-width:118px;">
-            <span class="step-badge b-key">🔑 关键</span>
-            <div class="step-title">人工审核推送</div>
-            <div class="step-desc">医生/护士审核<br>修改后推送</div>
-          </div>
-          <span class="arr">→</span>
-          <div class="step s-user" style="min-width:110px;">
-            <span class="step-badge b-user">👤 用户</span>
-            <div class="step-title">用户接收执行</div>
-            <div class="step-desc">响应随访<br>上传指标数据</div>
-          </div>
-          <span class="arr">→</span>
-          <div class="step s-sys" style="min-width:110px;">
-            <span class="step-badge b-sys">⚙️ 系统</span>
-            <div class="step-title">记录追踪</div>
-            <div class="step-desc">执行率统计<br>督办闭环跟进</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- L3 -->
-      <div class="tier-block">
-        <div class="tier-tag t-L3">
-          <div class="tc">L3</div>
-          <div class="tn">人工主导<br>AI辅助</div>
-        </div>
-        <div class="tier-steps">
-          <div class="step s-human" style="min-width:118px;">
-            <span class="step-badge b-human">👨‍⚕️ 人工</span>
-            <div class="step-title">人工创建任务</div>
-            <div class="step-desc">医生/护士<br>主动发起服务</div>
-          </div>
-          <span class="arr">→</span>
-          <div class="step s-ai" style="min-width:118px;">
-            <span class="step-badge b-ai">🤖 AI</span>
-            <div class="step-title">AI辅助建议</div>
-            <div class="step-desc">参考建议/模板<br>历史对比分析</div>
-          </div>
-          <span class="arr">→</span>
-          <div class="step s-user" style="min-width:110px;">
-            <span class="step-badge b-user">👤 用户</span>
-            <div class="step-title">线下/线上执行</div>
-            <div class="step-desc">复诊/会诊<br>高级干预服务</div>
-          </div>
-          <span class="arr">→</span>
-          <div class="step s-human" style="min-width:110px;">
-            <span class="step-badge b-human">👨‍⚕️ 人工</span>
-            <div class="step-title">督办跟进</div>
-            <div class="step-desc">执行结果记录<br>人工闭环处理</div>
-          </div>
-        </div>
-      </div>
-
+    <div class="connector">
+      <span class="connector-text">▼ 执行数据汇集，进入效果评估与方案优化闭环</span>
     </div>
-  </div>
 
-  <div class="connector">
-    <span class="connector-text">▼ 执行数据汇集，进入效果评估与方案优化闭环</span>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════
        D线：反馈优化
   ═══════════════════════════════════════════════════ -->
-  <div class="swimlane lane-D">
-    <div class="lane-label">
-      <div class="line-code">D线</div>
-      <div class="line-name">反馈优化</div>
-      <div class="line-sub">Optimization</div>
-    </div>
-    <div class="lane-content">
-      <div class="steps-row">
+    <div class="swimlane lane-D">
+      <div class="lane-label">
+        <div class="line-code">D线</div>
+        <div class="line-name">反馈优化</div>
+        <div class="line-sub">Optimization</div>
+      </div>
+      <div class="lane-content">
+        <div class="steps-row">
 
-        <div class="step s-sys">
-          <span class="step-badge b-sys">⚙️ 系统</span>
-          <div class="step-title">执行数据<br>采集汇总</div>
-          <div class="step-desc">依从率/指标<br>用户反馈</div>
+          <div class="step s-sys">
+            <span class="step-badge b-sys">⚙️ 系统</span>
+            <div class="step-title">执行数据<br>采集汇总</div>
+            <div class="step-desc">依从率/指标<br>用户反馈</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-ai">
+            <span class="step-badge b-ai">🤖 AI</span>
+            <div class="step-title">AI效果分析</div>
+            <div class="step-desc">群体/个体<br>多维统计分析</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-ai">
+            <span class="step-badge b-ai">🤖 AI</span>
+            <div class="step-title">异常预警</div>
+            <div class="step-desc">指标异常/过期<br>自动预警触发</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-human">
+            <span class="step-badge b-human">👨‍⚕️ 人工</span>
+            <div class="step-title">督办处理</div>
+            <div class="step-desc">规则自动督办<br>+人工可配置</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-ai">
+            <span class="step-badge b-ai">🤖 AI</span>
+            <div class="step-title">生成优化建议</div>
+            <div class="step-desc">方案迭代方向<br>证据更新建议</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-key">
+            <span class="step-badge b-key">🔑 关键</span>
+            <div class="step-title">医生审核</div>
+            <div class="step-desc">确认优化方向<br>批准版本升级</div>
+          </div>
+          <span class="arr">→</span>
+
+          <div class="step s-sys">
+            <span class="step-badge b-sys">⚙️ 系统</span>
+            <div class="step-title">Skill版本<br>迭代更新</div>
+            <div class="step-desc">新版本发布<br>返回A线优化</div>
+          </div>
+
         </div>
-        <span class="arr">→</span>
-
-        <div class="step s-ai">
-          <span class="step-badge b-ai">🤖 AI</span>
-          <div class="step-title">AI效果分析</div>
-          <div class="step-desc">群体/个体<br>多维统计分析</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-ai">
-          <span class="step-badge b-ai">🤖 AI</span>
-          <div class="step-title">异常预警</div>
-          <div class="step-desc">指标异常/过期<br>自动预警触发</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-human">
-          <span class="step-badge b-human">👨‍⚕️ 人工</span>
-          <div class="step-title">督办处理</div>
-          <div class="step-desc">规则自动督办<br>+人工可配置</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-ai">
-          <span class="step-badge b-ai">🤖 AI</span>
-          <div class="step-title">生成优化建议</div>
-          <div class="step-desc">方案迭代方向<br>证据更新建议</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-key">
-          <span class="step-badge b-key">🔑 关键</span>
-          <div class="step-title">医生审核</div>
-          <div class="step-desc">确认优化方向<br>批准版本升级</div>
-        </div>
-        <span class="arr">→</span>
-
-        <div class="step s-sys">
-          <span class="step-badge b-sys">⚙️ 系统</span>
-          <div class="step-title">Skill版本<br>迭代更新</div>
-          <div class="step-desc">新版本发布<br>返回A线优化</div>
-        </div>
-
       </div>
     </div>
-  </div>
 
-  <!-- Footer -->
-  <div class="footer">
-    <div class="footer-note">
-      <span>🔒 无HIS对接，独立数据闭环</span>
-      <span>💰 基础服务（免费）+ 增值服务（付费）双轨并行</span>
-      <span>🔄 前100例患者积累后启动月度Skill优化循环</span>
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-note">
+        <span>🔒 无HIS对接，独立数据闭环</span>
+        <span>💰 基础服务（免费）+ 增值服务（付费）双轨并行</span>
+        <span>🔄 前100例患者积累后启动月度Skill优化循环</span>
+      </div>
+      <div style="color:#CBD5E1;">荣科科技 · 健康管理平台 · 2026</div>
     </div>
-    <div style="color:#CBD5E1;">荣科科技 · 健康管理平台 · 2026</div>
-  </div>
 
-</div>
+  </div>
 </body>
+
 </html>
