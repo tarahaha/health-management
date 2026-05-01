@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小不悟 · 织界IP顶层设计图谱 v6.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0704;
+    --gold: #c9a227;
+    --gold-light: #e8c96a;
+    --gold-dim: #7a5f12;
+    --red: #8b1a1a;
+    --red-bright: #c0392b;
+    --teal: #1a6b8a;
+    --teal-light: #2a9bc4;
+    --cream: #f0e6c8;
+    --cream-dim: #b8a882;
+    --card-bg: rgba(20,14,6,0.95);
+    --card-border: rgba(201,162,39,0.35);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: var(--ink);
+    color: var(--cream);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,162,39,0.06) 0%, transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%23c9a22718' stroke-width='0.5'%3E%3Ccircle cx='60' cy='60' r='40'/%3E%3Ccircle cx='60' cy='60' r='28'/%3E%3Cpath d='M20 60 Q40 40 60 60 Q80 80 100 60'/%3E%3Cpath d='M60 20 Q80 40 60 60 Q40 80 60 100'/%3E%3Cpath d='M30 30 Q60 10 90 30 Q110 60 90 90 Q60 110 30 90 Q10 60 30 30Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: auto, 120px 120px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .site-header {
+    position: relative; z-index: 10;
+    text-align: center;
+    padding: 56px 24px 40px;
+    border-bottom: 1px solid rgba(201,162,39,0.2);
+    background: linear-gradient(180deg, rgba(139,26,26,0.12) 0%, transparent 100%);
+  }
+  .site-header .stamp {
+    display: inline-block;
+    border: 2px solid var(--red-bright);
+    color: var(--red-bright);
+    font-size: 11px; letter-spacing: 4px;
+    padding: 3px 14px; margin-bottom: 16px;
+    font-family: 'ZCOOL XiaoWei', serif;
+  }
+  .site-header h1 {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: clamp(32px, 5vw, 56px);
+    color: var(--gold-light);
+    text-shadow: 0 0 40px rgba(201,162,39,0.5), 0 2px 4px rgba(0,0,0,0.8);
+    letter-spacing: 6px; margin-bottom: 12px;
+  }
+  .site-header .subtitle { font-size: 13px; color: var(--cream-dim); letter-spacing: 3px; }
+  .gold-line { width: 200px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 20px auto 0; }
+  .layout { position: relative; z-index: 1; display: flex; max-width: 1600px; margin: 0 auto; padding: 0 20px; }
+  .side-nav { position: sticky; top: 24px; align-self: flex-start; width: 190px; flex-shrink: 0; padding: 24px 0; margin-right: 32px; }
+  .side-nav .nav-title { font-size: 10px; letter-spacing: 3px; color: var(--gold-dim); margin-bottom: 16px; padding-left: 12px; }
+  .side-nav a { display: block; padding: 7px 12px; font-size: 12px; color: var(--cream-dim); text-decoration: none; border-left: 2px solid transparent; transition: all 0.2s; line-height: 1.4; }
+  .side-nav a:hover, .side-nav a.active { color: var(--gold-light); border-left-color: var(--gold); background: rgba(201,162,39,0.06); }
+  .main-content { flex: 1; min-width: 0; padding: 32px 0 80px; }
+  .section { margin-bottom: 52px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 2px; overflow: hidden; }
+  .section-header { display: flex; align-items: center; gap: 16px; padding: 18px 28px; border-bottom: 1px solid rgba(201,162,39,0.15); background: linear-gradient(90deg, rgba(201,162,39,0.08) 0%, transparent 100%); }
+  .section-num { font-family: 'ZCOOL XiaoWei', serif; font-size: 11px; color: var(--gold-dim); letter-spacing: 2px; min-width: 60px; }
+  .section-title { font-family: 'ZCOOL XiaoWei', serif; font-size: 20px; color: var(--gold-light); letter-spacing: 3px; }
+  .section-tag { margin-left: auto; font-size: 10px; color: var(--red-bright); border: 1px solid var(--red-bright); padding: 2px 8px; letter-spacing: 1px; white-space: nowrap; }
+  .section-body { padding: 28px; }
+  /* 通用组件 */
+  .gold-divider { font-size: 11px; color: var(--gold-dim); letter-spacing: 3px; margin: 24px 0 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(201,162,39,0.12); }
+  .info-block { padding: 16px 20px; border-left: 3px solid var(--gold-dim); background: rgba(201,162,39,0.04); margin: 16px 0; font-size: 13px; color: var(--cream-dim); line-height: 1.9; }
+  .info-block.teal { border-left-color: var(--teal-light); background: rgba(42,155,196,0.04); }
+  .info-block.red { border-left-color: var(--red-bright); background: rgba(192,57,43,0.04); }
+  .tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 1px; margin-right: 4px; }
+  .tag-gold { background: rgba(201,162,39,0.15); color: var(--gold); }
+  .tag-teal { background: rgba(42,155,196,0.15); color: var(--teal-light); }
+  .tag-red { background: rgba(192,57,43,0.15); color: #e57373; }
+  .tag-gray { background: rgba(120,120,120,0.2); color: #999; }
+  /* PART 00 */
+  .def-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .def-card { background: rgba(201,162,39,0.04); border: 1px solid rgba(201,162,39,0.2); padding: 22px; position: relative; }
+  .def-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--gold); }
+  .def-card h3 { font-family: 'ZCOOL XiaoWei', serif; font-size: 17px; color: var(--gold-light); margin-bottom: 12px; letter-spacing: 2px; }
+  .def-card p { color: var(--cream-dim); font-size: 13px; line-height: 1.9; }
+  .core-law { margin-top: 22px; text-align: center; padding: 20px; border: 1px solid rgba(201,162,39,0.35); background: rgba(201,162,39,0.06); }
+  .core-law .law-text { font-family: 'ZCOOL XiaoWei', serif; font-size: 20px; color: var(--gold-light); letter-spacing: 5px; }
+  .core-law .law-sub { font-size: 12px; color: var(--cream-dim); margin-top: 10px; line-height: 1.8; }
+  /* PART 01 */
+  .world-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+  .world-intro-text { font-size: 13px; color: var(--cream-dim); line-height: 2; }
+  .world-intro-text p { margin-bottom: 12px; }
+  .world-visual { border: 1px solid rgba(201,162,39,0.2); overflow: hidden; }
+  .world-visual img { width: 100%; display: block; }
+  .world-visual .img-caption { padding: 8px 12px; font-size: 11px; color: var(--gold-dim); text-align: center; background: rgba(201,162,39,0.04); }
+  .zone-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
+  .zone-card { border: 1px solid rgba(201,162,39,0.2); padding: 20px; position: relative; }
+  .zone-card.gold { border-color: rgba(201,162,39,0.5); background: rgba(201,162,39,0.05); }
+  .zone-card.teal { border-color: rgba(26,107,138,0.5); background: rgba(26,107,138,0.05); }
+  .zone-card.dark { border-color: rgba(100,40,40,0.6); background: rgba(60,20,20,0.12); }
+  .zone-card.deep { border-color: rgba(60,40,80,0.5); background: rgba(30,20,50,0.15); }
+  .zone-level { font-size: 10px; letter-spacing: 2px; margin-bottom: 6px; }
+  .zone-card.gold .zone-level { color: var(--gold-dim); }
+  .zone-card.teal .zone-level { color: var(--teal-light); }
+  .zone-card.dark .zone-level { color: #c07070; }
+  .zone-card.deep .zone-level { color: #9b7fd4; }
+  .zone-name { font-family: 'ZCOOL XiaoWei', serif; font-size: 18px; color: var(--gold-light); letter-spacing: 2px; margin-bottom: 4px; }
+  .zone-sub { font-size: 11px; color: var(--cream-dim); margin-bottom: 12px; }
+  .zone-desc { font-size: 12px; color: var(--cream-dim); line-height: 1.8; margin-bottom: 10px; }
+  .zone-detail { font-size: 12px; line-height: 1.8; }
+  .zone-detail .zd-row { display: flex; gap: 8px; margin-bottom: 5px; }
+  .zone-detail .zd-label { color: var(--gold-dim); flex-shrink: 0; width: 48px; font-size: 11px; }
+  .zone-detail .zd-val { color: var(--cream-dim); }
+  .rules-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 4px; }
+  .rule-item { text-align: center; padding: 16px 10px; border: 1px solid rgba(201,162,39,0.15); background: rgba(201,162,39,0.02); }
+  .rule-icon { font-size: 20px; margin-bottom: 8px; }
+  .rule-name { font-size: 13px; color: var(--gold); margin-bottom: 6px; font-family: 'ZCOOL XiaoWei', serif; }
+  .rule-desc { font-size: 11px; color: var(--cream-dim); line-height: 1.6; }
+  /* PART 02 纹灵体系 */
+  .three-tier { display: flex; align-items: stretch; gap: 0; margin: 16px 0 24px; }
+  .tier-card { flex: 1; padding: 22px 18px; border: 1px solid rgba(201,162,39,0.15); position: relative; }
+  .tier-card.t1 { background: rgba(40,40,40,0.35); border-color: rgba(100,100,100,0.3); }
+  .tier-card.t2 { background: rgba(26,107,138,0.08); border-color: rgba(26,107,138,0.35); }
+  .tier-card.t3 { background: rgba(201,162,39,0.07); border-color: rgba(201,162,39,0.45); }
+  .tier-arrow { display: flex; align-items: center; padding: 0 10px; color: var(--gold-dim); font-size: 22px; flex-shrink: 0; }
+  .tier-num { font-size: 10px; letter-spacing: 2px; margin-bottom: 8px; }
+  .tier-card.t1 .tier-num { color: #777; }
+  .tier-card.t2 .tier-num { color: var(--teal-light); }
+  .tier-card.t3 .tier-num { color: var(--gold); }
+  .tier-name { font-family: 'ZCOOL XiaoWei', serif; font-size: 20px; margin-bottom: 10px; letter-spacing: 2px; }
+  .tier-card.t1 .tier-name { color: #aaa; }
+  .tier-card.t2 .tier-name { color: var(--teal-light); }
+  .tier-card.t3 .tier-name { color: var(--gold-light); }
+  .tier-desc { font-size: 12px; color: var(--cream-dim); line-height: 1.8; margin-bottom: 10px; }
+  .tier-example { font-size: 11px; padding: 8px 10px; margin-top: 8px; }
+  .tier-card.t1 .tier-example { background: rgba(100,100,100,0.1); color: #888; }
+  .tier-card.t2 .tier-example { background: rgba(26,107,138,0.1); color: var(--teal-light); }
+  .tier-card.t3 .tier-example { background: rgba(201,162,39,0.1); color: var(--gold); }
+  .attr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .attr-item { padding: 16px 14px; border: 1px solid rgba(201,162,39,0.15); }
+  .attr-name { font-family: 'ZCOOL XiaoWei', serif; font-size: 15px; color: var(--gold); margin-bottom: 4px; }
+  .attr-en { font-size: 10px; color: var(--gold-dim); margin-bottom: 8px; letter-spacing: 1px; }
+  .attr-desc { font-size: 12px; color: var(--cream-dim); line-height: 1.7; }
+  .attr-example { font-size: 11px; color: var(--teal-light); margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(201,162,39,0.1); }
+  /* PART 03 织师分层 */
+  .formula-box { background: rgba(201,162,39,0.05); border: 1px solid rgba(201,162,39,0.3); padding: 28px; text-align: center; margin-bottom: 24px; }
+  .formula-row { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
+  .formula-item { text-align: center; }
+  .formula-label { font-family: 'ZCOOL XiaoWei', serif; font-size: 17px; color: var(--gold-light); margin-bottom: 4px; }
+  .formula-sub { font-size: 11px; color: var(--cream-dim); }
+  .formula-op { font-size: 26px; color: var(--gold-dim); }
+  .formula-result { margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(201,162,39,0.2); }
+  .formula-result .result-text { font-family: 'ZCOOL XiaoWei', serif; font-size: 20px; color: var(--gold-light); letter-spacing: 3px; }
+  .formula-result .result-sub { font-size: 12px; color: var(--cream-dim); margin-top: 8px; line-height: 1.8; }
+  .weaver-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .weaver-card { border: 1px solid rgba(201,162,39,0.15); padding: 20px; }
+  .weaver-card.special { border-color: rgba(192,57,43,0.4); background: rgba(192,57,43,0.04); }
+  .weaver-level { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .level-badge { display: inline-block; padding: 3px 10px; font-size: 11px; border-radius: 1px; font-family: 'ZCOOL XiaoWei', serif; letter-spacing: 1px; }
+  .level-1 { background: rgba(80,80,80,0.3); color: #999; }
+  .level-2 { background: rgba(26,107,138,0.2); color: var(--teal-light); }
+  .level-3 { background: rgba(201,162,39,0.2); color: var(--gold); }
+  .level-s { background: rgba(192,57,43,0.2); color: #e57373; }
+  .weaver-card .wc-row { display: flex; gap: 8px; margin-bottom: 7px; font-size: 12px; }
+  .weaver-card .wc-label { color: var(--gold-dim); flex-shrink: 0; width: 56px; font-size: 11px; }
+  .weaver-card .wc-val { color: var(--cream-dim); line-height: 1.7; }
+  /* PART 04 阵营 */
+  .faction-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: start; }
+  .faction-card { padding: 22px; border: 1px solid; }
+  .faction-card.order { border-color: rgba(201,162,39,0.4); background: rgba(201,162,39,0.04); }
+  .faction-card.chaos { border-color: rgba(192,57,43,0.4); background: rgba(192,57,43,0.04); }
+  .faction-name { font-family: 'ZCOOL XiaoWei', serif; font-size: 20px; letter-spacing: 3px; margin-bottom: 6px; }
+  .faction-card.order .faction-name { color: var(--gold-light); }
+  .faction-card.chaos .faction-name { color: #e57373; }
+  .faction-slogan { font-size: 12px; margin-bottom: 14px; font-style: italic; }
+  .faction-card.order .faction-slogan { color: var(--gold-dim); }
+  .faction-card.chaos .faction-slogan { color: #c07070; }
+  .faction-row { display: flex; gap: 8px; margin-bottom: 8px; font-size: 12px; }
+  .faction-label { color: var(--gold-dim); flex-shrink: 0; width: 52px; font-size: 11px; }
+  .faction-val { color: var(--cream-dim); line-height: 1.7; }
+  .faction-map { margin-top: 14px; padding: 10px 14px; font-size: 11px; color: var(--cream-dim); border-top: 1px solid rgba(201,162,39,0.1); }
+  .faction-map span { color: var(--gold-dim); }
+  .vs-block { text-align: center; padding-top: 20px; }
+  .vs-text { font-family: 'ZCOOL XiaoWei', serif; font-size: 32px; color: var(--gold-dim); display: block; margin-bottom: 10px; }
+  .vs-sub { font-size: 11px; color: var(--cream-dim); letter-spacing: 1px; line-height: 1.8; }
+  .third-way { margin-top: 16px; padding: 18px 22px; border: 1px solid rgba(42,155,196,0.4); background: rgba(42,155,196,0.04); display: flex; align-items: flex-start; gap: 16px; }
+  .third-way-icon { font-size: 26px; flex-shrink: 0; margin-top: 2px; }
+  .third-way-text { font-size: 13px; color: var(--cream-dim); line-height: 1.9; }
+  .third-way-text strong { color: var(--teal-light); font-family: 'ZCOOL XiaoWei', serif; font-size: 15px; font-weight: 400; display: block; margin-bottom: 6px; }
+  /* 响应式 */
+  @media (max-width: 1100px) { .side-nav { display: none; } .layout { padding: 0 16px; } }
+  @media (max-width: 768px) {
+    .def-grid, .zone-grid, .world-intro, .weaver-cards { grid-template-columns: 1fr; }
+    .rules-grid, .attr-grid { grid-template-columns: repeat(2, 1fr); }
+    .three-tier { flex-direction: column; }
+    .tier-arrow { display: none; }
+    .faction-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="stamp">南京云锦品牌IP · 世界观顶层设计</div>
+  <h1>小不悟 · 织界</h1>
+  <p class="subtitle">IP WORLDVIEW MASTER DOCUMENT · v6.1</p>
+  <div class="gold-line"></div>
+</header>
+
+<div class="layout">
+  <nav class="side-nav">
+    <div class="nav-title">CONTENTS</div>
+    <a href="#part00">00 · 开篇定义</a>
+    <a href="#part01">01 · 织界构成</a>
+    <a href="#part02">02 · 纹灵体系</a>
+    <a href="#part03">03 · 织师分层</a>
+    <a href="#part04">04 · 社会阵营</a>
+    <a href="#part05">05 · 核心角色</a>
+    <a href="#part06">06 · 基础纹灵</a>
+    <a href="#part07">07 · 旅程主线</a>
+    <a href="#part08">08 · 区域候选库</a>
+    <a href="#part09">09 · 冲突矛盾库</a>
+    <a href="#part10">10 · 搞笑场景库</a>
+  </nav>
+
+  <main class="main-content">
+
+    <!-- PART 00 开篇定义 -->
+    <section class="section" id="part00">
+      <div class="section-header">
+        <span class="section-num">PART 00</span>
+        <span class="section-title">开篇定义</span>
+        <span class="section-tag">入门必读</span>
+      </div>
+      <div class="section-body">
+        <div class="def-grid">
+          <div class="def-card">
+            <h3>⚡ 织界是什么</h3>
+            <p>织界是一个由南京云锦织造而生的完整奇幻世界。它有天有地，有山川河流，有城市街道，有居民生活——一切与现实世界无异，只是构成这个世界的材质完全不同：山是层叠的丝线织物，河是流淌的金银线，天空是流动的染料色彩，建筑是经纬框架撑起的纹样宫殿，食物是凝固的色块，风是染料的扩散。</p>
+            <p style="margin-top:10px;">每一块被织造出来的云锦，都对应着织界中一片土地的诞生。织师的每一次提花，都在织界的某处创造了新的生命与风景。</p>
+          </div>
+          <div class="def-card">
+            <h3>✦ 纹灵是什么</h3>
+            <p>纹灵是织界中一切有意识的生命体。它们由织师织造而生，由纹样赋予外形，由织师注入的"意"（精神与情感）赋予灵魂。纹灵的外貌、性格、社会地位、命运走向，都与其诞生时的纹样种类和织师的能力状态密切相关。</p>
+            <p style="margin-top:10px;">纹灵不是人类，但它们有喜怒哀乐，有欲望与恐惧，有社会关系与阶级矛盾。它们是云锦纹样的"活化"——每一个纹灵，都是一块云锦的灵魂。</p>
+          </div>
+        </div>
+        <div class="core-law">
+          <div class="law-text">纹样是形，纹灵是意</div>
+          <div class="law-sub">
+            纹样决定了一个纹灵"看起来是什么"，而"意"决定了它"真正是什么"。<br>
+            这是织界最根本的哲学命题，也是小不悟整个故事的核心：没有固定纹样的他，究竟是什么？
+          </div>
+        </div>
+        <div class="info-block" style="margin-top:20px;">
+          <strong style="color:var(--gold); font-family:'ZCOOL XiaoWei',serif; font-size:14px;">关于"完美"的双重态度</strong><br>
+          云锦工艺的极致追求是完美——这是匠人精神，值得尊重和肯定。但织界的执法机构"织灵司"将这种追求扭曲成了冷酷的抹杀规则：任何偏离标准的纹灵都将被消除，不给任何补救机会。故事批判的不是"追求完美"本身，而是"将完美标准凌驾于生命价值之上"的极端主义。小不悟代表的是另一种可能：化腐朽为神奇，用包容与创造力让残缺也能绽放出属于自己的光。
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 01 织界构成 -->
+    <section class="section" id="part01">
+      <div class="section-header">
+        <span class="section-num">PART 01</span>
+        <span class="section-title">织界构成</span>
+        <span class="section-tag">世界地理</span>
+      </div>
+      <div class="section-body">
+
+        <div class="world-intro">
+          <div class="world-intro-text">
+            <p>织界是一个完整的立体世界，空间感与现实无异。它有高耸的山脉、辽阔的平原、幽深的峡谷、繁华的城市，也有荒芜的废墟和神秘的深渊。</p>
+            <p>不同的是，这里的山脉是由无数层叠的丝线织物构成的，山体表面覆盖着云锦纹样，在阳光（染料光线）的照射下泛着绸缎般的光泽。河流是流淌的金银线，在地面上蜿蜒流淌，发出细微的金属振动声。天空是一层巨大的染料色彩流动层，随着时间推移，靛蓝、金橙、朱砂红在天幕上缓缓扩散，形成织界独特的昼夜与天气变化。</p>
+            <p>云霞纹灵在中层空间漂浮游走，像会发光的水母，是织界天空中最常见的生命体。建筑由经纬线框架撑起，外墙是绣上去的纹样，门窗是镂空的花纹，在风中会轻微颤动，发出丝线摩擦的声音。</p>
+          </div>
+          <div class="world-visual">
+            <img src="织界概念图_全景.png" alt="织界世界全景概念图" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+            <div style="display:none;padding:40px;text-align:center;color:var(--gold-dim);font-size:12px;">织界全景概念图</div>
+            <div class="img-caption">织界全景 · 天机阁 / 锦绣城 / 断纬渊 / 织山</div>
+          </div>
+        </div>
+
+        <div class="gold-divider">— 四大宏观区域 · 垂直层级分布 —</div>
+
+        <div class="zone-grid">
+          <div class="zone-card gold">
+            <div class="zone-level">最高层 · 权力中枢</div>
+            <div class="zone-name">天机阁</div>
+            <div class="zone-sub">悬浮于织界最高处的金色宫殿群</div>
+            <div class="zone-desc">天机阁不是建在地面上的，而是悬挂在织界最密集的经线顶端，像一座倒挂的宫殿群，由无数根金线从下方托举，又有无数根金线从上方拉住，在半空中保持绝对的平衡与对称。从锦绣城仰望，天机阁就像一轮永不落下的金色太阳，光芒笼罩整个织界中央区域。</div>
+            <div class="zone-detail">
+              <div class="zd-row"><span class="zd-label">居民</span><span class="zd-val">织灵司官员、金龙纹灵纹体、高阶守纹者，以及少数被认定为"完美纹灵"的精英</span></div>
+              <div class="zd-row"><span class="zd-label">氛围</span><span class="zd-val">肃穆、冷酷、绝对秩序。金线整齐排列，没有任何杂乱，连空气都是对称的</span></div>
+              <div class="zd-row"><span class="zd-label">禁忌</span><span class="zd-val">任何残缺纹灵不得入内。衡纹在此发布审判令，被判定为残次品的纹灵将从这里被"抹除"</span></div>
+              <div class="zd-row"><span class="zd-label">剧情功能</span><span class="zd-val">终章决战场所，也是小不悟最终要面对的权力核心</span></div>
+            </div>
+          </div>
+          <div class="zone-card teal">
+            <div class="zone-level">中层 · 主流社会</div>
+            <div class="zone-name">锦绣城</div>
+            <div class="zone-sub">织界最繁华的纹灵聚居都市</div>
+            <div class="zone-desc">锦绣城建在织界中层最密集的经纬节点上，高低错落，像一座山城。城市的街道是宽阔的纬线大道，两侧建筑的外墙覆盖着各式各样的云锦纹样，牡丹、凤凰、江崖海水，每一栋建筑都是一件活的艺术品。金银线河流穿城而过，是城市的交通动脉，也是财富流动的象征。</div>
+            <div class="zone-detail">
+              <div class="zd-row"><span class="zd-label">居民</span><span class="zd-val">各类凡纹灵，按纹样种类聚居在不同的"纹样诸国"（详见PART 08区域候选库）</span></div>
+              <div class="zd-row"><span class="zd-label">氛围</span><span class="zd-val">繁华热闹，但暗流涌动。表面上是和谐的多元社会，实则有严格的纹样等级制度</span></div>
+              <div class="zd-row"><span class="zd-label">规则</span><span class="zd-val">所有纹灵必须在织灵司登记注册，持有"纹样证明"才能合法居住。无证者即为"黑户"，随时面临被抹除的风险</span></div>
+              <div class="zd-row"><span class="zd-label">剧情功能</span><span class="zd-val">主要故事发生地，单元剧的主舞台，每个纹样诸国都是一集或一季的故事背景</span></div>
+            </div>
+          </div>
+          <div class="zone-card dark">
+            <div class="zone-level">低层 · 流放之地</div>
+            <div class="zone-name">断纬渊</div>
+            <div class="zone-sub">经线断裂后塌陷形成的黑暗深渊</div>
+            <div class="zone-desc">断纬渊是织界的"地下城"，是经线大规模断裂后，整片区域向下塌陷形成的深渊地带。这里光线昏暗，断裂的丝线像钟乳石一样从上方垂落，空间扭曲破碎，色彩褪色严重，到处是灰暗的残缺纹样。但这里并非死地——它有自己的生态，有自己的规则，只是与锦绣城的规则截然相反。</div>
+            <div class="zone-detail">
+              <div class="zd-row"><span class="zd-label">居民</span><span class="zd-val">被织灵司判定为残次品后流放至此的纹灵，以及主动逃离锦绣城秩序的"出走者"</span></div>
+              <div class="zd-row"><span class="zd-label">氛围</span><span class="zd-val">混乱、戾气重，但也有意外的温情。被抛弃的人聚在一起，形成了另一种粗糙却真实的社群</span></div>
+              <div class="zd-row"><span class="zd-label">统治者</span><span class="zd-val">碎锦，游纹群的领袖，用愤怒和力量维持着这片混乱中的秩序</span></div>
+              <div class="zd-row"><span class="zd-label">剧情功能</span><span class="zd-val">第一季核心矛盾场所，小不悟与碎锦的相遇与冲突在此发生</span></div>
+            </div>
+          </div>
+          <div class="zone-card deep">
+            <div class="zone-level">最深处 · 起源之地</div>
+            <div class="zone-name">隐山工坊</div>
+            <div class="zone-sub">织界最深处的古老造物空间</div>
+            <div class="zone-desc">隐山工坊位于所有经纬线的根部，是整个织界的"地基层"。这里没有城市，没有居民，只有一台古老的木质织机，和一个独自织造了数百年的织师——隐山。工坊的空间幽暗而神秘，四周悬挂着无数半完成的纹灵雏形，像标本一样静静等待着被赋予"意"的那一刻。</div>
+            <div class="zone-detail">
+              <div class="zd-row"><span class="zd-label">居民</span><span class="zd-val">只有隐山一人，以及他历年来织造的各种未完成作品</span></div>
+              <div class="zd-row"><span class="zd-label">氛围</span><span class="zd-val">寂静、孤独、充满创造力的张力。每一次织机的声音都像心跳，预示着新生命的诞生</span></div>
+              <div class="zd-row"><span class="zd-label">特殊性</span><span class="zd-val">这里是小不悟的诞生地，也是整个织界故事的起点。隐山工坊连接着现实世界与织界，织机的每一次运作都在两个世界之间产生共振</span></div>
+              <div class="zd-row"><span class="zd-label">剧情功能</span><span class="zd-val">序章与终章的场所，小不悟的来处与归处</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="gold-divider">— 织界物理规则 · 材质法则 —</div>
+        <div class="rules-grid">
+          <div class="rule-item">
+            <div class="rule-icon">🕸️</div>
+            <div class="rule-name">经纬线</div>
+            <div class="rule-desc">织界的重力骨架与空间结构。经线提供高度支撑，纬线提供水平延展。经纬线断裂会导致局部空间塌陷，形成类似断纬渊的异常区域。</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">✨</div>
+            <div class="rule-name">金银线</div>
+            <div class="rule-desc">织界的能量货币与权力象征。金线代表最高权威，银线代表中等地位。谁掌握金线谁就拥有地位，金线河流流经之处，是织界最繁华的区域。</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">🦚</div>
+            <div class="rule-name">孔雀羽线</div>
+            <div class="rule-desc">织界最稀缺的神圣材料，只有用孔雀羽线织造的纹灵才能达到最高阶生命形态。孔雀羽线的断供是碎锦悲剧的直接原因，也是整个故事最重要的物质性矛盾根源。</div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-icon">🎨</div>
+            <div class="rule-name">染料</div>
+            <div class="rule-desc">织界的天气系统与生命力指标。染料流动形成天气变化，色彩鲜艳代表生命力旺盛，褪色意味着生命力衰竭。被戾气侵染的纹灵，色晕会逐渐发黑，最终化为灰烬。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 02 纹灵体系 -->
+    <section class="section" id="part02">
+      <div class="section-header">
+        <span class="section-num">PART 02</span>
+        <span class="section-title">纹灵体系</span>
+        <span class="section-tag">生命法则</span>
+      </div>
+      <div class="section-body">
+        <div class="gold-divider">— 生命三阶 · 从静到动到觉醒 —</div>
+        <div class="three-tier">
+          <div class="tier-card t1">
+            <div class="tier-num">第一阶</div>
+            <div class="tier-name">无灵纹</div>
+            <div class="tier-desc">只有形，没有意识，是织界的"背景板"。无灵纹构成了织界的山川、云霞、建筑外墙、街道地面，它们没有情感，不会移动，是纯粹的纹样存在。但它们并非毫无价值——正是无数无灵纹的积累，才构成了织界这个世界的物质基础。</div>
+            <div class="tier-example">代表：路边的花纹地砖、山体表面的云纹、建筑外墙的装饰纹样</div>
+          </div>
+          <div class="tier-arrow">→</div>
+          <div class="tier-card t2">
+            <div class="tier-num">第二阶</div>
+            <div class="tier-name">凡纹灵</div>
+            <div class="tier-desc">有形有意，能活动，有情感，但受花本约束。花本是织造时确定的"命运底稿"，规定了凡纹灵的性格倾向、能力边界和大致的人生轨迹。凡纹灵可以在花本范围内自由生活，但无法突破花本的限制——这是织界绝大多数居民的状态，也是整个社会阶级固化的根本原因。</div>
+            <div class="tier-example">代表：小云卷、小金线、小花纹，以及锦绣城中的大多数普通居民</div>
+          </div>
+          <div class="tier-arrow">→</div>
+          <div class="tier-card t3">
+            <div class="tier-num">第三阶</div>
+            <div class="tier-name">灵纹体</div>
+            <div class="tier-desc">突破花本限制，能主动改变自身纹样，是织界最高生命形态。灵纹体的诞生极为罕见，需要非遗级以上的织师才有概率织出，且往往伴随着某种极端的情感或意志爆发。灵纹体不受花本约束，这意味着他们既是织界最自由的存在，也是织灵司最忌惮的存在——因为他们无法被预测和控制。</div>
+            <div class="tier-example">代表：衡纹（金龙纹灵纹体）、隐山历年来创造的少数觉醒者</div>
+          </div>
+        </div>
+
+        <div class="info-block teal">
+          <strong style="color:var(--teal-light);">小不悟的特殊性</strong> — 小不悟不属于以上任何一阶的标准分类。他没有固定纹样（理论上无法成为凡纹灵），但他有强烈的"意"（排除了无灵纹的可能）。他的存在本身就是对织界分类体系的挑战——一个没有形的"意"，究竟算什么？这个问题是整个故事的哲学核心。
+        </div>
+
+        <div class="gold-divider">— 纹灵核心四属性 —</div>
+        <div class="attr-grid">
+          <div class="attr-item">
+            <div class="attr-name">纹样</div>
+            <div class="attr-en">PATTERN · 形</div>
+            <div class="attr-desc">纹灵的外形与身份标识，决定其种族归属和社会地位。纹样越华贵（如龙凤），地位越高；纹样越普通（如云霞），地位越低。纹样是可以被看见的，因此也是最容易被用来歧视和分类的标准。</div>
+            <div class="attr-example">小不悟无固定纹样 → 无法被归类 → 被视为威胁</div>
+          </div>
+          <div class="attr-item">
+            <div class="attr-name">意</div>
+            <div class="attr-en">SPIRIT · 灵魂</div>
+            <div class="attr-desc">纹灵的灵魂与个性，由织师织造时注入的精神情感所决定。织师当时的心境、情绪、意图，都会直接影响纹灵的性格底色。一个在愤怒中织出的纹灵，往往天生带有戾气；一个在喜悦中织出的纹灵，往往天生乐观。</div>
+            <div class="attr-example">隐山在迷茫中织出小不悟 → 小不悟天生对"自我是什么"充满疑问</div>
+          </div>
+          <div class="attr-item">
+            <div class="attr-name">色晕</div>
+            <div class="attr-en">COLOR HALO · 生命力</div>
+            <div class="attr-desc">纹灵的生命力外显指标，表现为身体周围的色彩光晕。色晕鲜艳饱满代表生命力旺盛，色晕褪色发灰代表生命力衰竭，色晕完全发黑则意味着纹灵即将化为灰烬消散。情绪极度负面（戾气、绝望）会加速色晕氧化发黑，这是织界版本的"精神内耗"。</div>
+            <div class="attr-example">碎锦的色晕持续发黑 → 她的愤怒正在消耗她自己的生命</div>
+          </div>
+          <div class="attr-item">
+            <div class="attr-name">花本</div>
+            <div class="attr-en">PATTERN DRAFT · 命运</div>
+            <div class="attr-desc">织造时确定的命运底稿，是挑花结本工艺的产物。花本决定了凡纹灵的能力上限和大致命运走向。花本结错一个扣，整个命运就会发生错位——这不是纹灵自己的错，但后果却要由纹灵独自承担，这是织界最深的不公正之一。</div>
+            <div class="attr-example">碎锦的花本在最初就结错了扣 → 她的悲剧命运早在诞生前就已注定</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 03 织师分层 -->
+    <section class="section" id="part03">
+      <div class="section-header">
+        <span class="section-num">PART 03</span>
+        <span class="section-title">织师分层与纹灵诞生公式</span>
+        <span class="section-tag">核心法则</span>
+      </div>
+      <div class="section-body">
+        <div class="formula-box">
+          <div class="formula-row">
+            <div class="formula-item">
+              <div class="formula-label">纹样</div>
+              <div class="formula-sub">结构 · 外形基础</div>
+            </div>
+            <div class="formula-op">×</div>
+            <div class="formula-item">
+              <div class="formula-label">精神 / 情感</div>
+              <div class="formula-sub">织师注入的"意"</div>
+            </div>
+            <div class="formula-op">×</div>
+            <div class="formula-item">
+              <div class="formula-label">织师等级</div>
+              <div class="formula-sub">媒介转化能力</div>
+            </div>
+          </div>
+          <div class="formula-result">
+            <div class="result-text">↓ 纹灵（概率诞生）</div>
+            <div class="result-sub">三者共同决定纹灵的等级与命运。缺少任何一个要素，纹灵都无法诞生或只能停留在无灵纹阶段。<br>这也是云锦非遗最重要的灵魂所在：技艺、情感、材料，缺一不可。</div>
+          </div>
+        </div>
+
+        <div class="info-block">
+          <strong style="color:var(--gold);">重要说明：</strong>织师是纹灵诞生的媒介，不是一个组织，而是一种"角色类型"。织界中每一个纹灵的等级与命运，都与织造他的织师的能力和状态密切相关。这是整个世界观最重要的底层逻辑，也是"出身决定起点"这一社会隐喻的根源——你是谁，在很大程度上取决于是谁创造了你，以及他在创造你时的状态。
+        </div>
+
+        <div class="gold-divider">— 四级织师详解 —</div>
+        <div class="weaver-cards">
+          <div class="weaver-card">
+            <div class="weaver-level"><span class="level-badge level-1">普通织工</span></div>
+            <div class="wc-row"><span class="wc-label">织造能力</span><span class="wc-val">按图纸机械织造，技术熟练但缺乏情感投入，像流水线工人</span></div>
+            <div class="wc-row"><span class="wc-label">可诞生</span><span class="wc-val">只能产生无灵纹。织出的纹样精准但无灵气，是织界的"背景板生产者"</span></div>
+            <div class="wc-row"><span class="wc-label">行为特征</span><span class="wc-val">追求速度和产量，对每一块织物的情感投入几乎为零。他们不是坏人，只是把织造当作一份工作而非一种创造</span></div>
+            <div class="wc-row"><span class="wc-label">现实映射</span><span class="wc-val">流水线生产工人、机械化复制的"工厂货"，以及任何将创造性工作纯粹工具化的状态</span></div>
+          </div>
+          <div class="weaver-card">
+            <div class="weaver-level"><span class="level-badge level-2">熟练织师</span></div>
+            <div class="wc-row"><span class="wc-label">织造能力</span><span class="wc-val">技艺熟练，偶有灵感涌现，能在织造中注入一定的情感，但尚未达到"人机合一"的境界</span></div>
+            <div class="wc-row"><span class="wc-label">可诞生</span><span class="wc-val">偶尔产生凡纹灵，但等级较低，花本相对简单，命运空间有限</span></div>
+            <div class="wc-row"><span class="wc-label">行为特征</span><span class="wc-val">对织造有热情，会在某些特别的时刻感受到与织物之间的共鸣，但这种共鸣不稳定，无法持续</span></div>
+            <div class="wc-row"><span class="wc-label">现实映射</span><span class="wc-val">有技艺的手工匠人、认真对待工作的普通从业者，以及那些偶尔能感受到创作喜悦的人</span></div>
+          </div>
+          <div class="weaver-card">
+            <div class="weaver-level"><span class="level-badge level-3">非遗级织师</span></div>
+            <div class="wc-row"><span class="wc-label">织造能力</span><span class="wc-val">人机合一，织造时能与织物产生深度情感共鸣，每一根线的走向都充满意图和情感</span></div>
+            <div class="wc-row"><span class="wc-label">可诞生</span><span class="wc-val">有概率诞生高阶凡纹灵，极少数情况下能诞生灵纹体。诞生的纹灵往往个性鲜明，命运空间广阔</span></div>
+            <div class="wc-row"><span class="wc-label">行为特征</span><span class="wc-val">将织造视为生命的一部分，能在织物中倾注真实的喜怒哀乐。他们织出的每一块云锦都是独一无二的，因为他们的情感状态永远不会完全重复</span></div>
+            <div class="wc-row"><span class="wc-label">现实映射</span><span class="wc-val">国家级非遗传承人、真正的艺术家，以及任何能将自我完全融入创作的人</span></div>
+          </div>
+          <div class="weaver-card special">
+            <div class="weaver-level"><span class="level-badge level-s">隐山（超越级）</span></div>
+            <div class="wc-row"><span class="wc-label">织造能力</span><span class="wc-val">突破传承边界，不仅能织出前人从未织过的纹样，还能在织造中创造出连自己都无法预料的意外</span></div>
+            <div class="wc-row"><span class="wc-label">可诞生</span><span class="wc-val">创造了小不悟这样的奇迹——一个没有固定纹样却拥有强烈"意"的存在，是织界分类体系从未见过的生命形态</span></div>
+            <div class="wc-row"><span class="wc-label">行为特征</span><span class="wc-val">极度孤独，因为没有人能真正理解他的创造。他的织造不是为了产出，而是为了探索——探索织界的边界，探索生命的可能性</span></div>
+            <div class="wc-row"><span class="wc-label">现实映射</span><span class="wc-val">突破传承边界的创新者、在传统中开辟新路的先行者，以及那些创造了超越自己理解范围的作品的艺术家</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 04 社会阵营 -->
+    <section class="section" id="part04">
+      <div class="section-header">
+        <span class="section-num">PART 04</span>
+        <span class="section-title">社会阵营格局</span>
+        <span class="section-tag">权力结构</span>
+      </div>
+      <div class="section-body">
+        <div class="faction-grid">
+          <div class="faction-card order">
+            <div class="faction-name">织灵司</div>
+            <div class="faction-slogan">"偏离经纬，即是废品。织界，不需要残缺。"</div>
+            <div class="faction-row"><span class="faction-label">本质</span><span class="faction-val">以维护织界经纬稳定为名建立的权力机构，掌握着对所有纹灵的生死审判权</span></div>
+            <div class="faction-row"><span class="faction-label">运作方式</span><span class="faction-val">定期对所有纹灵进行"纹样审查"，凡是偏离标准的纹灵，轻则降级剥夺权利，重则直接抹除。审查标准由织灵司单方面制定，没有申诉机制</span></div>
+            <div class="faction-row"><span class="faction-label">内部矛盾</span><span class="faction-val">织灵司内部并非铁板一块。有人是真心信奉完美主义，有人是为了维护自身利益，有人是迫于权力压力不得不执行，有人开始对规则产生怀疑但不敢说出来</span></div>
+            <div class="faction-row"><span class="faction-label">与完美的关系</span><span class="faction-val">追求完美本是匠人精神，值得尊重。但织灵司将这种追求扭曲成了不给任何补救机会的抹杀规则——问题不在于"追求完美"，而在于"用完美标准否定生命价值"</span></div>
+            <div class="faction-map"><span>现实隐喻：</span>极致内卷的社会体系 · KPI考核文化 · 社会时钟的压迫 · 内心那个永远觉得"你不够好"的苛责声音</div>
+          </div>
+          <div class="vs-block">
+            <span class="vs-text">VS</span>
+            <div class="vs-sub">秩序<br>对抗<br>自由<br><br>完美<br>对抗<br>残缺</div>
+          </div>
+          <div class="faction-card chaos">
+            <div class="faction-name">游纹群</div>
+            <div class="faction-slogan">"凭什么？！是你们把我生下来，又把我当成垃圾！"</div>
+            <div class="faction-row"><span class="faction-label">本质</span><span class="faction-val">并非天生反叛，而是被织灵司判定为"残次品"后被迫流落断纬渊的纹灵群体</span></div>
+            <div class="faction-row"><span class="faction-label">形成原因</span><span class="faction-val">他们中的大多数不是因为"做错了什么"而被流放，而是因为花本的先天缺陷、孔雀羽线的断供、织师的失误——这些都是他们无法控制的原因，但后果却要由他们承担</span></div>
+            <div class="faction-row"><span class="faction-label">内部生态</span><span class="faction-val">游纹群内部也有自己的秩序，由碎锦用力量和威望维持。他们不是一盘散沙，而是一群被逼到边缘的人形成的粗糙但真实的共同体</span></div>
+            <div class="faction-row"><span class="faction-label">真实心理</span><span class="faction-val">愤怒与戾气是痛苦的外壳，内心深处几乎每一个游纹群成员都渴望被接纳、被承认、被看见。他们不是不想努力，而是被告知"你再努力也没用"之后，选择了放弃</span></div>
+            <div class="faction-map"><span>现实隐喻：</span>被迫躺平的群体 · 被高期待所伤的人 · 经历重大挫折后一蹶不振者 · 被社会系统性排斥的边缘群体</div>
+          </div>
+        </div>
+
+        <div class="third-way">
+          <div class="third-way-icon">✦</div>
+          <div class="third-way-text">
+            <strong>小不悟 · 第三条路</strong>
+            小不悟既不属于织灵司（他不完美，无法被接纳），也不属于游纹群（他没有放弃，也没有被愤怒吞噬）。他的存在本身就是对这个非此即彼的二元对立的挑战。他代表了在秩序与失序之间寻找第三条路的可能——不是用规则压制残缺，也不是用愤怒报复完美，而是用共情代替审判，用接纳代替抹杀，用创造力让残缺也能绽放出属于自己的意义。这条路没有先例，没有地图，只有小不悟一步一步走出来。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 05 核心角色 -->
+    <section class="section" id="part05">
+      <div class="section-header">
+        <span class="section-num">PART 05</span>
+        <span class="section-title">核心角色图谱</span>
+        <span class="section-tag">主要人物</span>
+      </div>
+      <div class="section-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+          <!-- 小不悟 -->
+          <div style="border:1px solid rgba(42,155,196,0.3);border-radius:2px;overflow:hidden;">
+            <div style="padding:18px 22px;background:linear-gradient(90deg,rgba(42,155,196,0.12),transparent);border-bottom:1px solid rgba(42,155,196,0.15);display:flex;align-items:center;gap:14px;">
+              <div style="width:46px;height:46px;border-radius:50%;background:rgba(42,155,196,0.15);border:1px solid rgba(42,155,196,0.4);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">✦</div>
+              <div>
+                <div style="font-family:'ZCOOL XiaoWei',serif;font-size:20px;color:var(--gold-light);letter-spacing:2px;">小不悟</div>
+                <div style="font-size:11px;color:var(--teal-light);margin-top:2px;">主角 · 未完成的奇迹 · 第三条路的开拓者</div>
+              </div>
+            </div>
+            <div style="padding:18px 22px;">
+              <div class="wc-row"><span class="wc-label">纹样</span><span class="wc-val">无固定纹样，身体由未完成的五彩丝线构成，会随情绪变化呈现不同的流光色彩。在愤怒时偏红，在平静时偏蓝，在共情他人时会短暂呈现对方的纹样特征</span></div>
+              <div class="wc-row"><span class="wc-label">诞生</span><span class="wc-val">隐山在一次织造实验失败时的意外产物。花本未完成，按照织界规则根本不应该存在，但他偏偏获得了极强的"意"——这是织界历史上从未发生过的事</span></div>
+              <div class="wc-row"><span class="wc-label">核心能力</span><span class="wc-val">共情激活——能感知并激活他人纹样中沉睡的"意"。这个能力不是攻击性的，而是治愈性的：他能让一个已经放弃的纹灵重新感受到自己存在的价值</span></div>
+              <div class="wc-row"><span class="wc-label">性格底色</span><span class="wc-val">天生好奇，对一切事物都充满疑问。不是因为聪明，而是因为他对"自己是什么"这个问题的困惑，让他对所有"我是什么"的问题都格外敏感</span></div>
+              <div class="wc-row"><span class="wc-label">核心冲突</span><span class="wc-val">没有本源纹样，不被织界的分类体系承认，随时面临被织灵司抹除的风险。但他拥有改变一切的力量——只是他自己还不知道</span></div>
+              <div class="wc-row"><span class="wc-label">成长弧光</span><span class="wc-val">从"我是什么"的困惑 → 到"我能做什么"的探索 → 到"我就是我"的自我确认。这条弧光不是线性的，会反复，会退步，但最终指向真正的自我接纳</span></div>
+              <div style="margin-top:12px;padding:10px 14px;border-left:2px solid var(--teal-light);background:rgba(42,155,196,0.04);font-size:12px;color:var(--cream-dim);font-style:italic;">"我没有形状……但我，就是我！"</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--teal-light);padding:6px 10px;background:rgba(42,155,196,0.06);border:1px solid rgba(42,155,196,0.15);">📍 现实映射：觉得自己"不够好""没准备好""不知道自己是谁"的迷茫年轻人；在标准化体系中找不到自己位置的人</div>
+            </div>
+          </div>
+
+          <!-- 衡纹 -->
+          <div style="border:1px solid rgba(201,162,39,0.3);border-radius:2px;overflow:hidden;">
+            <div style="padding:18px 22px;background:linear-gradient(90deg,rgba(201,162,39,0.1),transparent);border-bottom:1px solid rgba(201,162,39,0.15);display:flex;align-items:center;gap:14px;">
+              <div style="width:46px;height:46px;border-radius:50%;background:rgba(201,162,39,0.12);border:1px solid rgba(201,162,39,0.4);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">⚖</div>
+              <div>
+                <div style="font-family:'ZCOOL XiaoWei',serif;font-size:20px;color:var(--gold-light);letter-spacing:2px;">守纹者 · 衡纹</div>
+                <div style="font-size:11px;color:var(--gold-dim);margin-top:2px;">对立者 · 秩序的执行者 · 被规则困住的完美主义者</div>
+              </div>
+            </div>
+            <div style="padding:18px 22px;">
+              <div class="wc-row"><span class="wc-label">纹样</span><span class="wc-val">金龙纹灵纹体，织界最高阶生命形态。金色鳞片在光线下折射出复杂的纹样，每一片都是完美对称的</span></div>
+              <div class="wc-row"><span class="wc-label">职责</span><span class="wc-val">织灵司最高执法者，负责维护织界经纬稳定，审判并抹除不符合标准的纹灵。他的判决没有上诉机制，一旦发出即为终局</span></div>
+              <div class="wc-row"><span class="wc-label">真实动机</span><span class="wc-val">深知"一步错、步步错"的代价——他曾亲眼目睹一次经纬失衡如何导致整片区域的崩塌。冷酷不是他的本性，而是他对混乱的深层恐惧催生的防御机制</span></div>
+              <div class="wc-row"><span class="wc-label">内心矛盾</span><span class="wc-val">他知道规则有时候是不公正的，但他更害怕没有规则。他用"维护秩序"来回避一个更深的问题：如果规则本身是错的，他这一生的执行又意味着什么？</span></div>
+              <div class="wc-row"><span class="wc-label">与小不悟</span><span class="wc-val">小不悟是他最大的威胁，也是他最深的困惑。一个没有纹样的存在，按规则应该被抹除，但他身上的"意"之强烈，是衡纹从未见过的。这让他第一次对自己的规则产生了动摇</span></div>
+              <div class="wc-row"><span class="wc-label">成长弧光</span><span class="wc-val">从绝对秩序的信奉者 → 被小不悟反复动摇 → 面对规则的局限性 → 最终在某个关键时刻选择了"人"而不是"规则"</span></div>
+              <div style="margin-top:12px;padding:10px 14px;border-left:2px solid var(--gold-dim);background:rgba(201,162,39,0.04);font-size:12px;color:var(--cream-dim);font-style:italic;">"偏离经纬，即是废品。织界，不需要残缺。"</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--teal-light);padding:6px 10px;background:rgba(42,155,196,0.06);border:1px solid rgba(42,155,196,0.15);">📍 现实映射：KPI体系的执行者、催婚的父母、内心那个永远苛责自己"还不够好"的声音</div>
+            </div>
+          </div>
+
+          <!-- 碎锦 -->
+          <div style="border:1px solid rgba(192,57,43,0.3);border-radius:2px;overflow:hidden;">
+            <div style="padding:18px 22px;background:linear-gradient(90deg,rgba(192,57,43,0.1),transparent);border-bottom:1px solid rgba(192,57,43,0.15);display:flex;align-items:center;gap:14px;">
+              <div style="width:46px;height:46px;border-radius:50%;background:rgba(192,57,43,0.12);border:1px solid rgba(192,57,43,0.4);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🌸</div>
+              <div>
+                <div style="font-family:'ZCOOL XiaoWei',serif;font-size:20px;color:var(--gold-light);letter-spacing:2px;">游纹灵 · 碎锦</div>
+                <div style="font-size:11px;color:#e57373;margin-top:2px;">镜像角色 · 另一种可能 · 愤怒背后的痛苦</div>
+              </div>
+            </div>
+            <div style="padding:18px 22px;">
+              <div class="wc-row"><span class="wc-label">纹样</span><span class="wc-val">残缺牡丹纹。本应是最华贵的满开牡丹，但孔雀羽线在织造最关键的时刻断供，导致花蕊永远无法完成，是一朵永远开不完全的花</span></div>
+              <div class="wc-row"><span class="wc-label">悲剧根源</span><span class="wc-val">双重悲剧：其一，花本在最初就结错了扣（挑花结本失误），罪不在她，但命运从一开始就走偏了；其二，孔雀羽线断供，她的织造在最关键时刻被迫中止，造成永久性的残缺</span></div>
+              <div class="wc-row"><span class="wc-label">与小不悟的关系</span><span class="wc-val">镜像角色——同样是残缺的存在，同样不被织界承认，但她选择了截然相反的应对方式。小不悟选择探索，碎锦选择愤怒；小不悟想融入，碎锦想报复</span></div>
+              <div class="wc-row"><span class="wc-label">真实心理</span><span class="wc-val">愤怒是她的盔甲，痛苦是她的内核。她不是天生暴力，而是被反复告知"你是废品"之后，用愤怒来保护那个还没有完全死去的自尊</span></div>
+              <div class="wc-row"><span class="wc-label">与隐山的关系</span><span class="wc-val">隐山是她的创造者，也是她最深的仇恨来源。她无法原谅隐山在孔雀羽线断供时选择了放弃，而不是想办法继续。这个"被放弃"的记忆是她所有愤怒的根</span></div>
+              <div class="wc-row"><span class="wc-label">成长弧光</span><span class="wc-val">从愤怒报复 → 被小不悟的共情触动 → 在某个脆弱时刻崩溃 → 放下仇恨，完成另一种救赎。她的救赎不是"变好了"，而是"不再用愤怒消耗自己了"</span></div>
+              <div style="margin-top:12px;padding:10px 14px;border-left:2px solid #c07070;background:rgba(192,57,43,0.04);font-size:12px;color:var(--cream-dim);font-style:italic;">"凭什么？！是你们把我生下来，又把我当成垃圾！"</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--teal-light);padding:6px 10px;background:rgba(42,155,196,0.06);border:1px solid rgba(42,155,196,0.15);">📍 现实映射：被父母/社会高期待所伤、经历重大挫折后戾气化的人；那些用愤怒来掩盖脆弱的人</div>
+            </div>
+          </div>
+
+          <!-- 隐山 -->
+          <div style="border:1px solid rgba(80,60,100,0.4);border-radius:2px;overflow:hidden;">
+            <div style="padding:18px 22px;background:linear-gradient(90deg,rgba(80,60,100,0.15),transparent);border-bottom:1px solid rgba(80,60,100,0.2);display:flex;align-items:center;gap:14px;">
+              <div style="width:46px;height:46px;border-radius:50%;background:rgba(80,60,100,0.2);border:1px solid rgba(120,80,160,0.4);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🪡</div>
+              <div>
+                <div style="font-family:'ZCOOL XiaoWei',serif;font-size:20px;color:var(--gold-light);letter-spacing:2px;">织师 · 隐山</div>
+                <div style="font-size:11px;color:#9b7fd4;margin-top:2px;">造物主 · 愧疚的创造者 · 逃避者与救赎者</div>
+              </div>
+            </div>
+            <div style="padding:18px 22px;">
+              <div class="wc-row"><span class="wc-label">身份</span><span class="wc-val">超越级织师，织界唯一能创造灵纹体的存在。他的织造能力已经超越了所有已知的传承体系，但他选择隐居而不是展示</span></div>
+              <div class="wc-row"><span class="wc-label">愧疚的来源</span><span class="wc-val">曾创造碎锦，在孔雀羽线断供时选择了放弃而不是坚持。他告诉自己是"没有办法"，但内心深处知道，他当时其实有其他选择，只是选择了更容易的那条路</span></div>
+              <div class="wc-row"><span class="wc-label">与小不悟</span><span class="wc-val">小不悟是他织造失败的意外产物，他既是小不悟的"父亲"，又是一个逃避者——他没有主动告诉小不悟自己的来历，也没有给予小不悟应有的引导，因为面对小不悟就意味着面对自己的愧疚</span></div>
+              <div class="wc-row"><span class="wc-label">内心困境</span><span class="wc-val">他创造了两个都承受着痛苦的生命：碎锦因他的放弃而愤怒，小不悟因他的失误而残缺。他不知道如何面对这两个存在，所以选择了隐居和沉默</span></div>
+              <div class="wc-row"><span class="wc-label">成长弧光</span><span class="wc-val">从隐居逃避 → 被小不悟的成长逼迫正视 → 与碎锦的正面对话 → 最终在小不悟的故事中完成自我救赎。他的救赎不是"弥补了过去"，而是"终于敢于承认自己的错误"</span></div>
+              <div style="margin-top:12px;padding:10px 14px;border-left:2px solid #9b7fd4;background:rgba(80,60,100,0.06);font-size:12px;color:var(--cream-dim);font-style:italic;">"机器能织出完美，但只有残缺，才是活着的证明。"</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--teal-light);padding:6px 10px;background:rgba(42,155,196,0.06);border:1px solid rgba(42,155,196,0.15);">📍 现实映射：用高标准伤害了孩子却不自知的父母；完美主义者的愧疚；那些用"逃避"来处理自己造成的伤害的人</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 06 基础纹灵 -->
+    <section class="section" id="part06">
+      <div class="section-header">
+        <span class="section-num">PART 06</span>
+        <span class="section-title">基础纹灵</span>
+        <span class="section-tag">单元剧角色 · 内容扩展担当</span>
+      </div>
+      <div class="section-body">
+        <div class="info-block">基础纹灵是织界中最普通的凡纹灵，是锦绣城的"普通市民"。他们不是主角，但他们是小不悟旅途中遇到的第一批真实的朋友，也是故事中承载日常温情与搞笑场景的重要角色。每一个基础纹灵都对应着一类真实的云锦纹样，也对应着一种现实中普遍存在的心理状态。</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px;">
+
+          <div style="padding:20px;border:1px solid rgba(201,162,39,0.15);background:rgba(201,162,39,0.02);">
+            <div style="font-size:28px;margin-bottom:10px;">☁️</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:2px;">小云卷</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;letter-spacing:1px;">云霞纹 · 凡纹灵 · 织界底层居民</div>
+            <div class="wc-row"><span class="wc-label">性格</span><span class="wc-val">乐观、胆小、讨好型人格。永远在微笑，但内心常常觉得自己微不足道</span></div>
+            <div class="wc-row"><span class="wc-label">日常处境</span><span class="wc-val">云霞纹是织界最常见的纹样，到处都是，因此也是最不被重视的。小云卷经常被用来给大纹样做背景板，他的存在感极低，但他已经习惯了</span></div>
+            <div class="wc-row"><span class="wc-label">与小不悟</span><span class="wc-val">小不悟的第一个朋友。小不悟是第一个认真问他"你想要什么"的人，这个问题让小云卷愣了很久，因为他从来没有想过自己可以有想要的东西</span></div>
+            <div class="wc-row"><span class="wc-label">成长方向</span><span class="wc-val">从"我只是背景板"到"我也可以是主角"。他的成长不是变得强大，而是开始相信自己的存在本身就有价值</span></div>
+            <div style="margin-top:10px;font-size:11px;color:var(--teal-light);">📍 映射：默默无闻但努力发光的普通人；总觉得自己"不够特别"的人</div>
+          </div>
+
+          <div style="padding:20px;border:1px solid rgba(201,162,39,0.15);background:rgba(201,162,39,0.02);">
+            <div style="font-size:28px;margin-bottom:10px;">✨</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:2px;">小金线</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;letter-spacing:1px;">金线精灵 · 特殊纹灵 · 织界硬通货</div>
+            <div class="wc-row"><span class="wc-label">性格</span><span class="wc-val">毒舌、傲娇、财迷，但关键时刻绝不缺席。嘴上说"我不在乎你们"，行动上永远第一个冲上去</span></div>
+            <div class="wc-row"><span class="wc-label">日常处境</span><span class="wc-val">金线是织界的"硬通货"，谁有金线谁就高贵。小金线因此天生有优越感，但这种优越感是脆弱的——一旦金线贬值或被大量复制，他的自我价值感就会崩塌</span></div>
+            <div class="wc-row"><span class="wc-label">核心冲突</span><span class="wc-val">用物质价值来定义自我价值。当有一天金线不再稀缺，他要如何找到自己存在的意义？这是他整个故事弧光的核心问题</span></div>
+            <div class="wc-row"><span class="wc-label">团队功能</span><span class="wc-val">吐槽担当和"外挂"提供者。经常因为被消耗而心疼大哭，但每次都会在抱怨之后默默补上</span></div>
+            <div style="margin-top:10px;font-size:11px;color:var(--teal-light);">📍 映射：嘴硬心软的人；用物质成就来定义自我价值的人；害怕"不值钱"的人</div>
+          </div>
+
+          <div style="padding:20px;border:1px solid rgba(201,162,39,0.15);background:rgba(201,162,39,0.02);">
+            <div style="font-size:28px;margin-bottom:10px;">🌸</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:2px;">小花纹</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;letter-spacing:1px;">折枝花卉纹 · 凡纹灵 · 织界颜值焦虑代言人</div>
+            <div class="wc-row"><span class="wc-label">性格</span><span class="wc-val">情绪化、极度爱美、容貌焦虑严重。每天都在担心自己的颜色不够鲜艳，或者色晕过渡不够自然</span></div>
+            <div class="wc-row"><span class="wc-label">日常处境</span><span class="wc-val">花卉纹在织界是"颜值担当"，但这也意味着她承受着巨大的外貌压力。她开了一家色晕修复工坊，一边帮别人解决颜色问题，一边对自己的颜色永远不满意</span></div>
+            <div class="wc-row"><span class="wc-label">核心冲突</span><span class="wc-val">把"好看"等同于"有价值"。她的焦虑不只是关于外貌，而是关于"如果我不好看了，我还有什么"</span></div>
+            <div class="wc-row"><span class="wc-label">成长方向</span><span class="wc-val">从"我的价值在于好看"到"我的价值在于我是我"。这条路很难走，因为整个织界的审美体系都在强化她的焦虑</span></div>
+            <div style="margin-top:10px;font-size:11px;color:var(--teal-light);">📍 映射：有容貌焦虑的年轻人；把外表等同于价值的人；在"变美"上投入大量精力却依然不满足的人</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 07 旅程主线 -->
+    <section class="section" id="part07">
+      <div class="section-header">
+        <span class="section-num">PART 07</span>
+        <span class="section-title">小不悟的奇迹旅程</span>
+        <span class="section-tag">四季故事线</span>
+      </div>
+      <div class="section-body">
+        <div class="info-block">故事结构参考单元剧+主线推进模式：每一集是一个相对独立的故事，但主线矛盾在每集中都有推进。每个区域对应一类真实云锦纹样，非遗知识点融入剧情，无感知地传递非遗文化。</div>
+
+        <div style="display:flex;gap:0;margin:20px 0;align-items:stretch;">
+          <div style="flex:1;padding:20px 16px;border:1px solid rgba(120,80,160,0.35);background:rgba(80,60,100,0.12);text-align:center;position:relative;">
+            <div style="font-size:10px;letter-spacing:2px;color:#9b7fd4;margin-bottom:8px;">第一季 · 春</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:20px;color:var(--cream);letter-spacing:2px;margin-bottom:10px;">诞生与逃亡</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:10px;">小不悟在隐山工坊意外诞生，被织灵司发现后开始逃亡。途经云霞岭遇见小云卷，流落断纬渊与碎锦正面冲突。第一季的核心是"我是什么"——小不悟第一次面对自己无法被定义的困境。</div>
+            <div style="font-size:11px;color:#9b7fd4;">📍 主要场景：隐山工坊 → 云霞岭 → 锦绣城边缘 → 断纬渊</div>
+            <div style="font-size:11px;color:var(--gold-dim);margin-top:6px;">对应纹样：云霞纹 · 废弃残缺纹</div>
+            <div style="position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--gold-dim);font-size:20px;z-index:2;">→</div>
+          </div>
+          <div style="flex:1;padding:20px 16px;border:1px solid rgba(26,107,138,0.35);background:rgba(26,107,138,0.08);text-align:center;position:relative;">
+            <div style="font-size:10px;letter-spacing:2px;color:var(--teal-light);margin-bottom:8px;">第二季 · 夏</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:20px;color:var(--cream);letter-spacing:2px;margin-bottom:10px;">游历与成长</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:10px;">小不悟深入锦绣城各纹样诸国，遇见形形色色的纹灵，用共情能力帮助他们解决问题，同时逐渐发现自己能力的边界。第二季的核心是"我能做什么"——从被动逃亡转为主动探索。</div>
+            <div style="font-size:11px;color:var(--teal-light);">📍 主要场景：牡丹坊 · 流波海 · 八宝迷宫</div>
+            <div style="font-size:11px;color:var(--gold-dim);margin-top:6px;">对应纹样：牡丹纹 · 江崖海水纹 · 八吉祥纹</div>
+            <div style="position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--gold-dim);font-size:20px;z-index:2;">→</div>
+          </div>
+          <div style="flex:1;padding:20px 16px;border:1px solid rgba(60,120,60,0.35);background:rgba(40,80,40,0.08);text-align:center;position:relative;">
+            <div style="font-size:10px;letter-spacing:2px;color:#7bc47b;margin-bottom:8px;">第三季 · 秋</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:20px;color:var(--cream);letter-spacing:2px;margin-bottom:10px;">真相与动摇</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:10px;">小不悟逐渐接近织界的权力核心，开始了解织灵司的真实运作方式，也第一次得知了碎锦与隐山之间的真相。第三季的核心是"我该怎么做"——面对更大的不公正，共情还够用吗？</div>
+            <div style="font-size:11px;color:#7bc47b;">📍 主要场景：岁寒谷 · 回纹阵 · 天机阁外围</div>
+            <div style="font-size:11px;color:var(--gold-dim);margin-top:6px;">对应纹样：四君子纹 · 几何回纹</div>
+            <div style="position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--gold-dim);font-size:20px;z-index:2;">→</div>
+          </div>
+          <div style="flex:1;padding:20px 16px;border:1px solid rgba(201,162,39,0.45);background:rgba(201,162,39,0.07);text-align:center;">
+            <div style="font-size:10px;letter-spacing:2px;color:var(--gold);margin-bottom:8px;">第四季 · 冬</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:20px;color:var(--cream);letter-spacing:2px;margin-bottom:10px;">决战与证明</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:10px;">小不悟进入天机阁，与衡纹正面对决，同时促成碎锦与隐山的和解。第四季的核心是"我就是我"——不是证明自己符合任何标准，而是证明自己的存在本身就有意义。</div>
+            <div style="font-size:11px;color:var(--gold);">📍 主要场景：龙凤阁 · 天机阁核心</div>
+            <div style="font-size:11px;color:var(--gold-dim);margin-top:6px;">对应纹样：龙纹 · 凤纹 · 麒麟纹</div>
+          </div>
+        </div>
+
+        <div class="info-block teal">
+          <strong style="color:var(--teal-light);">叙事结构说明</strong> — 每季13集，每集30s-60s短视频格式。单元剧结构：每集一个独立故事，解决一个具体问题，同时推进主线矛盾。主线矛盾在每季末集中爆发一次，形成季终高潮。织界要多展示画面（天空、山河、花草等织锦织造的世界），少用旁白，让视觉说话。
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 08 区域候选库 -->
+    <section class="section" id="part08">
+      <div class="section-header">
+        <span class="section-num">PART 08</span>
+        <span class="section-title">锦绣城 · 纹样诸国候选库</span>
+        <span class="section-tag">待筛选 · 11个区域</span>
+      </div>
+      <div class="section-body">
+        <div class="info-block">锦绣城内部按纹样种类划分为多个"纹样诸国"，每个区域都是一个独立的文化生态。以下11个区域是候选库，每季优先开发2-3个。标注★的为优先推荐区域。</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;">
+
+          <div style="border:1px solid rgba(201,162,39,0.4);background:rgba(201,162,39,0.04);padding:18px 20px;position:relative;">
+            <div style="position:absolute;top:10px;right:10px;font-size:10px;color:var(--gold);background:rgba(201,162,39,0.15);padding:2px 8px;">★ 第一季推荐</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">云霞岭</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;">对应纹样：云霞纹 · 祥云纹</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">柔软的丝绒质感山丘，表面覆盖着流动的云霞纹路，在染料光线下呈现出粉金色的渐变。云霞纹灵在这里漂浮游走，像会发光的水母群</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">以小云卷为代表的云霞纹灵群体，数量最多但地位最低。他们的工作是为锦绣城提供"背景色"，每天漂浮在城市上空，维持天空的色彩稳定</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①小不悟与小云卷的初遇，第一次感受到"普通"的温度；②云霞纹灵集体罢工事件——他们停止漂浮，锦绣城的天空开始褪色，引发全城恐慌</span></div>
+            <div class="wc-row"><span class="wc-label">非遗知识点</span><span class="wc-val">云霞纹是云锦中最基础的背景纹样，看似简单，实则需要极高的技艺才能织出自然流动的渐变效果</span></div>
+          </div>
+
+          <div style="border:1px solid rgba(201,162,39,0.4);background:rgba(201,162,39,0.04);padding:18px 20px;position:relative;">
+            <div style="position:absolute;top:10px;right:10px;font-size:10px;color:var(--gold);background:rgba(201,162,39,0.15);padding:2px 8px;">★ 第二季推荐</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">牡丹坊</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;">对应纹样：缠枝牡丹 · 折枝花卉</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">色彩最丰富的区域，建筑外墙是盛开的牡丹纹样，街道两侧是用丝线编织的花园，花朵会随季节（染料变化）开放和凋谢</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">以小花纹为代表的花卉纹灵，是锦绣城的"颜值担当"。这里有织界最多的美容工坊、色晕修复店、纹样造型师，是一个高度关注外貌的区域</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①小花纹的色晕修复工坊出现技术事故，把客人弄成了奇怪的颜色；②一朵"丑花"纹灵被整个牡丹坊排斥，小不悟帮助她找到自我价值</span></div>
+            <div class="wc-row"><span class="wc-label">非遗知识点</span><span class="wc-val">缠枝牡丹是云锦最经典的纹样之一，"缠枝"指的是花朵与枝叶相互缠绕的连续纹样结构，象征生生不息</span></div>
+          </div>
+
+          <div style="border:1px solid rgba(201,162,39,0.4);background:rgba(201,162,39,0.04);padding:18px 20px;position:relative;">
+            <div style="position:absolute;top:10px;right:10px;font-size:10px;color:var(--gold);background:rgba(201,162,39,0.15);padding:2px 8px;">★ 第一季推荐</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">流波海</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;">对应纹样：江崖海水纹</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">由流动的蓝绿色丝线构成的"海洋"，波浪是真实起伏的织物层，海浪拍打时会发出丝线碰撞的清脆声。远处有用金线织成的礁石，在"水"面上反光</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">江崖海水纹灵，性格奔放自由，是锦绣城中最难被织灵司管束的群体。他们的生活方式是流动的，不固定居所，随波逐流</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①小不悟逃亡途中落入流波海，被海浪卷走，在江崖海水纹灵的帮助下脱险；②流波海的"潮汐"失控事件——丝线海浪开始侵蚀周边区域</span></div>
+            <div class="wc-row"><span class="wc-label">非遗知识点</span><span class="wc-val">江崖海水纹是云锦中表现力最强的纹样之一，用"通经断纬"工艺织出，需要上下两位织师高度配合才能完成</span></div>
+          </div>
+
+          <div style="border:1px solid rgba(201,162,39,0.4);background:rgba(201,162,39,0.04);padding:18px 20px;position:relative;">
+            <div style="position:absolute;top:10px;right:10px;font-size:10px;color:var(--gold);background:rgba(201,162,39,0.15);padding:2px 8px;">★ 第三季推荐</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">八宝迷宫</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;">对应纹样：暗八仙 · 八吉祥纹</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">由八种吉祥纹样构成的立体迷宫，每个区域对应一种纹样，有不同的规则和挑战。迷宫会随时间重新排列，没有固定出口</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">八宝纹灵，每种纹样对应一种特殊能力。他们守护着迷宫的规则，对外来者充满警惕，但对通过考验的人极为慷慨</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①小不悟进入迷宫寻找某种材料，必须解开八种纹样的谜题；②迷宫中有一个被困了很久的纹灵，他是迷宫规则的受害者，小不悟帮助他找到出路</span></div>
+            <div class="wc-row"><span class="wc-label">非遗知识点</span><span class="wc-val">八吉祥纹（法螺、法轮、宝伞、白盖、莲花、宝瓶、金鱼、盘长）是佛教传入后融入云锦的纹样体系，每种都有特定的吉祥寓意</span></div>
+          </div>
+
+          <div style="border:1px solid rgba(201,162,39,0.2);padding:18px 20px;">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">龙凤阁</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;">对应纹样：龙纹 · 凤纹 · 建议第四季终章</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">金色与朱砂红为主调，建筑最为宏伟，是锦绣城内地位最高的区域，直接向天机阁汇报</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">龙纹灵和凤纹灵，织界的贵族阶层，享有最多特权，也承受着最大的"完美压力"</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①一位龙纹灵贵族私下帮助游纹群，被发现后面临抹除；②小不悟在这里第一次正面挑战织灵司的权威</span></div>
+          </div>
+
+          <div style="border:1px solid rgba(201,162,39,0.2);padding:18px 20px;">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">岁寒谷</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;">对应纹样：梅兰竹菊四君子 · 建议第三季</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">四季分明，每个季节对应一种君子纹样盛开。冬天梅花开，春天兰花开，夏天竹叶摇，秋天菊花盛</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">四君子纹灵，性格清高，重视气节，是织界中少数敢于公开质疑织灵司规则的群体</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①四君子纹灵的"气节"与现实生存之间的矛盾；②小不悟在这里学到了"坚守"的意义</span></div>
+          </div>
+
+          <div style="border:1px solid rgba(201,162,39,0.2);padding:18px 20px;">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">莲华池</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;">对应纹样：莲花纹 · 宝相花 · 可选季次</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">平静的丝线水面，莲花纹灵半浮半沉，整个区域弥漫着一种宁静但压抑的氛围</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">莲花纹灵，外表平静，内心有极深的内耗。他们用"出淤泥而不染"来自我安慰，但实际上很多人已经精疲力竭</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①莲华池的"内耗危机"——纹灵们集体陷入精神内耗，色晕开始褪色；②小不悟的共情能力在这里遭遇最大挑战</span></div>
+          </div>
+
+          <div style="border:1px solid rgba(201,162,39,0.2);padding:18px 20px;">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">回纹阵</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;">对应纹样：几何回纹 · 万字纹 · 建议第三季</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">由无数重复的几何纹样构成的迷宫式区域，空间感扭曲，走进去容易迷失方向，因为每个路口看起来都一样</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">回纹灵，哲学家气质，沉迷于研究"循环"与"命运"的关系，有些已经在这里绕了几百年</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①小不悟在回纹阵中迷路，被迫思考"我从哪里来，要去哪里"；②一个被困在循环中无法走出的纹灵，他的花本写着"永远重复"</span></div>
+          </div>
+
+          <div style="border:1px solid rgba(201,162,39,0.2);padding:18px 20px;">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">麒麟台</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;">对应纹样：麒麟纹 · 狮子纹 · 可选季次</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">高台地形，有竞技场性质的空间，麒麟纹灵在这里进行各种力量与智慧的较量</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">麒麟纹灵，重视力量与荣誉，有严格的等级制度，强者为尊</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①小不悟被迫参加麒麟台的"纹样竞技"，用共情能力代替力量赢得比赛；②一个曾经的强者因伤残缺，被麒麟台放逐</span></div>
+          </div>
+
+          <div style="border:1px solid rgba(201,162,39,0.2);padding:18px 20px;">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">蝙蝠洞</div>
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:12px;">对应纹样：蝙蝠纹（福字谐音）· 可选季次</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">洞穴地形，蝙蝠纹灵倒挂在顶部，整个区域在黑暗中发出奇异的荧光</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">蝙蝠纹灵，因外形被其他纹灵误解和排斥，但实际上是织界中最热心肠的群体，因为"福"是他们的本质</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①外貌偏见的故事——蝙蝠纹灵因为"看起来不吉利"被锦绣城排斥；②小不悟帮助他们让其他纹灵看见他们真正的价值</span></div>
+          </div>
+
+          <div style="border:1px solid rgba(192,57,43,0.35);background:rgba(192,57,43,0.04);padding:18px 20px;position:relative;">
+            <div style="position:absolute;top:10px;right:10px;font-size:10px;color:#e57373;background:rgba(192,57,43,0.15);padding:2px 8px;">★ 第一季核心</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:17px;color:var(--gold-light);margin-bottom:4px;letter-spacing:1px;">断纬渊</div>
+            <div style="font-size:10px;color:#c07070;margin-bottom:12px;">对应纹样：废弃残缺纹 · 碎锦领地</div>
+            <div class="wc-row"><span class="wc-label">视觉特征</span><span class="wc-val">灰暗杂乱，断裂的丝线从上方垂落，色彩严重褪色，空间扭曲破碎。但在混乱中有一种粗糙的生命力——墙上有游纹群涂抹的色彩标记，像地下艺术</span></div>
+            <div class="wc-row"><span class="wc-label">居民生态</span><span class="wc-val">游纹群，被流放的残缺纹灵。他们有自己的生存规则，互相帮助，但对外来者极度警惕。碎锦用力量和威望维持着这里的秩序</span></div>
+            <div class="wc-row"><span class="wc-label">故事钩子</span><span class="wc-val">①小不悟第一次来到断纬渊，被当作织灵司的探子，险些被碎锦消灭；②断纬渊的一次"色晕危机"——大量纹灵同时开始色晕发黑，小不悟用共情能力阻止了集体消亡</span></div>
+            <div class="wc-row"><span class="wc-label">非遗知识点</span><span class="wc-val">"断纬"是云锦工艺中最严重的织造事故之一，一旦发生，整块织物的结构都会受到影响，轻则返工，重则报废</span></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 09 冲突矛盾库 -->
+    <section class="section" id="part09">
+      <div class="section-header">
+        <span class="section-num">PART 09</span>
+        <span class="section-title">冲突矛盾穷举库</span>
+        <span class="section-tag">待筛选 · 17个冲突点</span>
+      </div>
+      <div class="section-body">
+
+        <div class="gold-divider">A · 主线核心冲突（5个）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+          <div style="padding:16px;border:1px solid rgba(201,162,39,0.2);background:rgba(201,162,39,0.03);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--gold-light);margin-bottom:8px;">① 秩序 vs 自由</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">织灵司的完美标准 vs 游纹群的生存权利，贯穿全四季。这不是简单的"好人vs坏人"，而是两种都有其合理性的价值观之间的碰撞——秩序保护了大多数，但也牺牲了少数；自由解放了个体，但也带来了混乱。</div>
+            <div style="font-size:11px;color:var(--teal-light);">剧情呈现：每季末的大冲突场景，以及日常中织灵司执法与游纹群反抗的小摩擦</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(201,162,39,0.2);background:rgba(201,162,39,0.03);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--gold-light);margin-bottom:8px;">② 完美 vs 残缺</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">匠人追求极致是美德，但"不完美就抹杀"是暴政。这个冲突的核心不是"完美是否有价值"，而是"完美标准是否有权决定生命的去留"。小不悟的存在本身就是对这个问题的回答。</div>
+            <div style="font-size:11px;color:var(--teal-light);">剧情呈现：每一个被织灵司审判的纹灵的故事，以及小不悟用残缺创造奇迹的时刻</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(201,162,39,0.2);background:rgba(201,162,39,0.03);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--gold-light);margin-bottom:8px;">③ 宿命 vs 觉醒</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">花本决定命运，但小不悟证明意志可以超越花本。这个冲突在每个角色身上都有体现：小云卷的花本写着"永远是背景"，但他最终成为了主角；碎锦的花本写着"残缺"，但她选择了如何面对残缺。</div>
+            <div style="font-size:11px;color:var(--teal-light);">剧情呈现：每个角色"突破花本"的关键时刻，以及回纹阵中"命运循环"的哲学探讨</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(201,162,39,0.2);background:rgba(201,162,39,0.03);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--gold-light);margin-bottom:8px;">④ 创造者 vs 被创造者</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">隐山的愧疚 vs 碎锦的控诉：你有权创造，但也有责任负责。这个冲突触及最深的伦理问题——当你创造了一个生命，你对这个生命负有什么责任？放弃是否是一种罪？</div>
+            <div style="font-size:11px;color:var(--teal-light);">剧情呈现：隐山与碎锦的正面对话场景（第三季或第四季），以及隐山对小不悟的愧疚与弥补</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(201,162,39,0.2);background:rgba(201,162,39,0.03);grid-column:1/-1;">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--gold-light);margin-bottom:8px;">⑤ 遗忘 vs 传承</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">云锦工艺面临失传，织界的消亡隐喻非遗的危机。随着织师数量减少，织界中诞生的新纹灵越来越少，整个世界在缓慢地走向静止。这个宏观危机是故事的终极背景，也是小不悟存在的终极意义——他的诞生本身，就是对"传承"最有力的回答。</div>
+            <div style="font-size:11px;color:var(--teal-light);">剧情呈现：织界某些区域开始"褪色"消失，老纹灵的记忆开始模糊，新纹灵的诞生越来越罕见</div>
+          </div>
+        </div>
+
+        <div class="gold-divider">B · 云锦工艺绑定冲突（6个）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
+          <div style="padding:16px;border:1px solid rgba(42,155,196,0.2);background:rgba(42,155,196,0.03);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--teal-light);margin-bottom:8px;">⑥ 挑花结本的错误</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">花本结错一个扣，整个命运发生错位，罪不在己却无法改变。这是碎锦悲剧的工艺根源——挑花结本是云锦织造前最关键的工序，一旦出错，整块织物的纹样都会偏移。</div>
+            <div style="font-size:11px;color:var(--teal-light);">工艺知识：挑花结本是云锦织造的"编程"工序，将纹样转化为织机可以执行的指令，需要极高的精确度</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(42,155,196,0.2);background:rgba(42,155,196,0.03);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--teal-light);margin-bottom:8px;">⑦ 孔雀羽线断供</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">最珍贵的材料在最关键时刻断绝，造就永远无法完成的悲剧。孔雀羽线的稀缺性是织界阶级分化的物质基础，也是碎锦故事的核心物质矛盾。</div>
+            <div style="font-size:11px;color:var(--teal-light);">工艺知识：孔雀羽线是真实云锦工艺中使用的材料，用孔雀羽毛捻成，色彩随光线变化，极为珍贵稀缺</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(42,155,196,0.2);background:rgba(42,155,196,0.03);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--teal-light);margin-bottom:8px;">⑧ 通经断纬的节奏</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">上下两人必须默契配合，一旦错拍，整块锦毁于一旦。这个工艺特性在故事中映射为"关系的重要性"——任何合作都需要信任和默契，一方的失误会伤害另一方。</div>
+            <div style="font-size:11px;color:var(--teal-light);">工艺知识：云锦织造需要两人配合，一人在上方提花，一人在下方投梭，必须保持精确的节奏同步</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(42,155,196,0.2);background:rgba(42,155,196,0.03);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--teal-light);margin-bottom:8px;">⑨ 金银线氧化发黑</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">生命力随时间流逝，被戾气侵染的纹灵会逐渐走向消亡。这个设定映射"精神内耗"——长期处于负面情绪中的人，会逐渐失去生命力，就像金银线在空气中氧化发黑。</div>
+            <div style="font-size:11px;color:var(--teal-light);">工艺知识：云锦中的金银线会随时间氧化，颜色从明亮变为暗沉，这是真实存在的材料老化问题</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(42,155,196,0.2);background:rgba(42,155,196,0.03);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--teal-light);margin-bottom:8px;">⑩ 色晕褪色危机</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">颜色是生命力的象征，褪色意味着"意"的消散。当一个纹灵长期处于压抑、绝望的状态，他的色晕会逐渐褪色，最终变成灰白色的"空壳"——有形无意，比死亡更可怕。</div>
+            <div style="font-size:11px;color:var(--teal-light);">剧情呈现：莲华池的集体内耗危机，以及碎锦色晕持续发黑的视觉化表达</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(42,155,196,0.2);background:rgba(42,155,196,0.03);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:var(--teal-light);margin-bottom:8px;">⑪ 稀缺资源争夺</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">孔雀羽线、金线的分配不公，引发阶级矛盾。织灵司掌控着所有稀缺资源的分配权，这是他们维持权力的根本手段。资源的不平等分配，是织界所有阶级矛盾的物质基础。</div>
+            <div style="font-size:11px;color:var(--teal-light);">剧情呈现：金线市场的价格操控事件，以及孔雀羽线被织灵司垄断的揭露</div>
+          </div>
+        </div>
+
+        <div class="gold-divider">C · 社会心理冲突（6个）</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div style="padding:16px;border:1px solid rgba(120,80,160,0.2);background:rgba(80,60,100,0.06);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:#9b7fd4;margin-bottom:8px;">⑫ 小透明危机</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">小云卷们拼尽全力却始终是背景板，如何找到自己的价值。这个冲突触及最普遍的现代焦虑：在一个强调"出众"的社会，普通人如何自处？平凡是否等于失败？</div>
+            <div style="font-size:11px;color:#9b7fd4;">情感共鸣点：每一个觉得自己"不够特别"的人</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(120,80,160,0.2);background:rgba(80,60,100,0.06);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:#9b7fd4;margin-bottom:8px;">⑬ 超我苛责</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">衡纹代表的内心批判者：永远觉得自己不够好。衡纹不只是外部的对立者，他也是小不悟内心那个苛责自己的声音的外化——"你没有纹样，你不应该存在"。</div>
+            <div style="font-size:11px;color:#9b7fd4;">情感共鸣点：有完美主义倾向、对自己极度苛刻的人</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(120,80,160,0.2);background:rgba(80,60,100,0.06);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:#9b7fd4;margin-bottom:8px;">⑭ 伪装的代价</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">用完美的纹样掩盖内心的残缺，最终不知道真实的自己是谁。这个冲突在龙凤阁的贵族纹灵身上体现最明显——他们的纹样完美，但内心的恐惧和压力从未消失。</div>
+            <div style="font-size:11px;color:#9b7fd4;">情感共鸣点：习惯"表演完美"、不敢展示脆弱的人</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(120,80,160,0.2);background:rgba(80,60,100,0.06);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:#9b7fd4;margin-bottom:8px;">⑮ 过期恐惧</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">色晕氧化发黑的设定映射：害怕自己"过了最好的年纪"。织界中有一种说法，纹灵的色晕在某个年龄段之后会开始不可逆地褪色——这是织界版本的"年龄焦虑"。</div>
+            <div style="font-size:11px;color:#9b7fd4;">情感共鸣点：有年龄焦虑、害怕"错过最好时机"的人</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(120,80,160,0.2);background:rgba(80,60,100,0.06);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:#9b7fd4;margin-bottom:8px;">⑯ 被定义的愤怒</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">碎锦的核心：凭什么你们来定义我是否有价值。这个冲突触及最深的尊严问题——每个人都有权定义自己的价值，而不是被他人的标准所定义。</div>
+            <div style="font-size:11px;color:#9b7fd4;">情感共鸣点：曾被他人否定、被迫接受他人定义的人</div>
+          </div>
+          <div style="padding:16px;border:1px solid rgba(120,80,160,0.2);background:rgba(80,60,100,0.06);">
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:14px;color:#9b7fd4;margin-bottom:8px;">⑰ 共情的边界</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;margin-bottom:8px;">小不悟的能力是治愈他人，但过度共情会让自己消耗殆尽。这是小不悟在第三季面临的最大危机——他帮助了太多人，却忘记了照顾自己，色晕开始褪色。</div>
+            <div style="font-size:11px;color:#9b7fd4;">情感共鸣点：习惯照顾他人却忽视自己的人；有"讨好型人格"倾向的人</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PART 10 搞笑场景库 -->
+    <section class="section" id="part10">
+      <div class="section-header">
+        <span class="section-num">PART 10</span>
+        <span class="section-title">轻松搞笑场景库</span>
+        <span class="section-tag">调节节奏 · 12个场景</span>
+      </div>
+      <div class="section-body">
+        <div class="info-block teal">搞笑场景的作用不只是"好笑"，每一个场景都与主线剧情有关联，在笑声中推进人物关系或揭示世界观细节。以下每个场景都包含完整的起因—经过—结果。</div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px;">
+
+          <div style="padding:16px;border:1px solid rgba(42,155,196,0.2);background:rgba(42,155,196,0.03);">
+            <div style="font-size:10px;color:var(--teal-light);margin-bottom:6px;letter-spacing:1px;">小不悟的乌龙 · 01</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">借纹失败</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>小不悟想混入锦绣城，需要一个"正常"的纹样伪装自己。<br><strong style="color:var(--gold-dim);">经过：</strong>他尝试"借用"牡丹纹灵的纹样，结果因为没有固定形态，借来的纹样无法固定，变成了一朵歪歪扭扭、颜色乱七八糟的"残花"。<br><strong style="color:var(--gold-dim);">结果：</strong>不但没有伪装成功，反而引来了更多人围观，小云卷在旁边捂嘴偷笑。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>引出"小不悟无法伪装自己"这一核心设定，也加深了他与小云卷的友谊。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(42,155,196,0.2);background:rgba(42,155,196,0.03);">
+            <div style="font-size:10px;color:var(--teal-light);margin-bottom:6px;letter-spacing:1px;">小不悟的乌龙 · 02</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">共情过载</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>小不悟第一次来到锦绣城，对所有纹灵的情绪都极度敏感。<br><strong style="color:var(--gold-dim);">经过：</strong>他一次性感受到了周围几十个纹灵的情绪，完全过载，同时哭同时笑，情绪切换快得像坏掉的收音机，嘴里说着完全矛盾的话。<br><strong style="color:var(--gold-dim);">结果：</strong>把周围的纹灵都吓跑了，只有小云卷留下来问他"你还好吗"。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>展示共情能力的副作用，也是小不悟学会"控制边界"的起点。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(42,155,196,0.2);background:rgba(42,155,196,0.03);">
+            <div style="font-size:10px;color:var(--teal-light);margin-bottom:6px;letter-spacing:1px;">小不悟的乌龙 · 03</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">模仿衡纹</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>小不悟觉得如果自己看起来威严一点，织灵司就不会那么容易找他麻烦。<br><strong style="color:var(--gold-dim);">经过：</strong>他尝试模仿衡纹的威严姿态，摆出金龙纹的架势，但因为没有固定形态，越模仿越滑稽，最后变成了一个发光的"软糖"，还在原地转圈。<br><strong style="color:var(--gold-dim);">结果：</strong>小金线在旁边笑到色晕都抖动了，说"你这个样子比原来更危险，因为太可爱了，会被当成玩具"。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>强化"小不悟无法成为别人"的主题，也展示了小金线的毒舌性格。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(201,162,39,0.15);background:rgba(201,162,39,0.02);">
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:6px;letter-spacing:1px;">织界日常梗 · 01</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">金线通货膨胀</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>织灵司为了某个原因大量增发金线，导致金线贬值。<br><strong style="color:var(--gold-dim);">经过：</strong>小金线发现自己被大量复制后价值暴跌，在街上崩溃大哭："我不值钱了！我不值钱了！"路过的纹灵都在绕道走。<br><strong style="color:var(--gold-dim);">结果：</strong>小不悟蹲下来认真地说："你的价值不在于稀缺，而在于你是你。"小金线愣了三秒，然后哭得更大声了，但这次是因为感动。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>推进小金线的成长弧光，也是小不悟"共情哲学"的一次实践。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(201,162,39,0.15);background:rgba(201,162,39,0.02);">
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:6px;letter-spacing:1px;">织界日常梗 · 02</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">色晕美容事故</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>小花纹的色晕修复工坊接了一个大客户，一位龙纹灵贵族要求"提升色晕亮度"。<br><strong style="color:var(--gold-dim);">经过：</strong>小花纹紧张过度，手抖，把染料配比搞错了，结果把这位贵族的金色色晕变成了荧光绿。贵族当场失控，工坊里鸡飞狗跳。<br><strong style="color:var(--gold-dim);">结果：</strong>小不悟帮助小花纹道歉，用共情能力让贵族平静下来，顺便发现这位贵族内心深处其实非常孤独。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>引出龙凤阁贵族的内心世界，为后续剧情埋下伏笔。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(201,162,39,0.15);background:rgba(201,162,39,0.02);">
+            <div style="font-size:10px;color:var(--gold-dim);margin-bottom:6px;letter-spacing:1px;">织界日常梗 · 03</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">经纬大堵塞</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>锦绣城的年度织造节，所有纹灵同时出行，经纬线严重超载。<br><strong style="color:var(--gold-dim);">经过：</strong>整个城市的经纬线系统堵塞，所有纹灵被困在半空中动弹不得，场面混乱又滑稽。小金线被卡在一根经线上，悬在半空，大声抱怨；小云卷因为太轻，被风吹来吹去，根本停不下来。<br><strong style="color:var(--gold-dim);">结果：</strong>小不悟因为没有固定形态，反而是唯一能在堵塞中自由穿行的，成了临时"疏通员"。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>展示小不悟"无形"的意外优势，也是对"残缺也有用处"的轻松诠释。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(192,57,43,0.15);background:rgba(192,57,43,0.03);">
+            <div style="font-size:10px;color:#e57373;margin-bottom:6px;letter-spacing:1px;">角色反差萌 · 01</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">碎锦的软肋</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>碎锦正在对小不悟发表威胁演讲，气势十足。<br><strong style="color:var(--gold-dim);">经过：</strong>一只迷路的小无灵纹（一朵微小的云霞纹）爬上了碎锦的肩膀，蹭了蹭她的脸。碎锦立刻从暴怒变成手足无措，声音都变小了，不知道该怎么办。<br><strong style="color:var(--gold-dim);">结果：</strong>小不悟目瞪口呆地看着这一幕，碎锦发现他在看，立刻恢复凶狠表情，但已经来不及了。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>第一次展示碎锦的柔软面，是她与小不悟关系转变的开端。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(192,57,43,0.15);background:rgba(192,57,43,0.03);">
+            <div style="font-size:10px;color:#e57373;margin-bottom:6px;letter-spacing:1px;">角色反差萌 · 02</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">衡纹崩人设</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>衡纹正在对一个纹灵进行严肃的审判，金色法阵展开，气氛肃杀。<br><strong style="color:var(--gold-dim);">经过：</strong>被审判的纹灵突然哭着说："你……你好帅。"衡纹愣了整整三秒，金色法阵开始不稳定地闪烁，冷酷的表情出现了一丝裂缝。<br><strong style="color:var(--gold-dim);">结果：</strong>审判被迫暂停，衡纹用了比平时多三倍的时间才恢复状态。小不悟在远处目睹了全程，若有所思。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>展示衡纹并非铁板一块，他也有被触动的时刻，为后续的转变埋下伏笔。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(192,57,43,0.15);background:rgba(192,57,43,0.03);">
+            <div style="font-size:10px;color:#e57373;margin-bottom:6px;letter-spacing:1px;">角色反差萌 · 03</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">隐山的外卖</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>隐山需要一种特殊材料，但他已经几百年没有出过工坊，不知道锦绣城的交易规则。<br><strong style="color:var(--gold-dim);">经过：</strong>他让小不悟去帮他"买"材料，但给的"货币"是一块古老的纹样碎片，在现在的锦绣城完全不通用。小不悟完全不懂交易规则，用这块碎片引发了一系列误会，最后被当成文物贩子追着跑。<br><strong style="color:var(--gold-dim);">结果：</strong>小不悟狼狈逃回，隐山看着他带回来的奇怪东西，沉默了很久，说："下次我自己去。"<br><strong style="color:var(--gold-dim);">剧情关联：</strong>展示隐山与现实世界的脱节，也是父子关系破冰的温馨时刻。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(120,80,160,0.2);background:rgba(80,60,100,0.05);">
+            <div style="font-size:10px;color:#9b7fd4;margin-bottom:6px;letter-spacing:1px;">工艺梗 · 01</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">花本说明书</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>小云卷第一次拿到自己的花本，兴奋地打开来看。<br><strong style="color:var(--gold-dim);">经过：</strong>花本上密密麻麻全是"注意事项"和"禁止行为"：禁止脱离背景位置、禁止单独行动、禁止改变色晕亮度……越看越绝望，最后翻到最后一页，上面写着"如有疑问，请联系织灵司"。<br><strong style="color:var(--gold-dim);">结果：</strong>小云卷把花本合上，深呼一口气，说："我的一生就这样被写死了？"小不悟认真地说："但花本没有写你不能交朋友。"小云卷愣了一下，笑了。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>用幽默方式介绍"花本"设定，同时推进小不悟与小云卷的友谊。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(120,80,160,0.2);background:rgba(80,60,100,0.05);">
+            <div style="font-size:10px;color:#9b7fd4;margin-bottom:6px;letter-spacing:1px;">工艺梗 · 02</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">通经断纬排练</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>小不悟和小云卷为了进入某个区域，需要假装是一对配合织造的"织造搭档"。<br><strong style="color:var(--gold-dim);">经过：</strong>他们尝试配合完成一次织造表演，但因为完全不同步，织出了一块"抽象派"云锦——颜色乱、纹样歪、结构崩。恰好被路过的织灵司成员看见，以为是某种新型破坏行为，当成证据拍了下来。<br><strong style="color:var(--gold-dim);">结果：</strong>两人被追着跑，那块"抽象派"云锦被留在原地，后来被一个艺术收藏家高价买走。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>科普"通经断纬"工艺需要双人配合，同时展示小不悟和小云卷的默契成长。</div>
+          </div>
+
+          <div style="padding:16px;border:1px solid rgba(120,80,160,0.2);background:rgba(80,60,100,0.05);">
+            <div style="font-size:10px;color:#9b7fd4;margin-bottom:6px;letter-spacing:1px;">工艺梗 · 03</div>
+            <div style="font-family:'ZCOOL XiaoWei',serif;font-size:15px;color:var(--cream);margin-bottom:8px;letter-spacing:1px;">孔雀羽的价格</div>
+            <div style="font-size:12px;color:var(--cream-dim);line-height:1.8;"><strong style="color:var(--gold-dim);">起因：</strong>小不悟问小金线，孔雀羽线到底有多贵。<br><strong style="color:var(--gold-dim);">经过：</strong>小金线报出了孔雀羽线的市价。所有人集体沉默了整整五秒。小云卷的嘴慢慢张开，小花纹的色晕开始不受控制地抖动。<br><strong style="color:var(--gold-dim);">结果：</strong>小不悟慢慢说："所以碎锦……真的很贵。"碎锦在远处的阴影里听到了这句话，表情复杂地转过身去，没有说话。<br><strong style="color:var(--gold-dim);">剧情关联：</strong>用轻松的方式揭示孔雀羽线的稀缺性，同时在笑声中埋下碎锦故事的情感深度。</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer style="position:relative;z-index:1;text-align:center;padding:32px;border-top:1px solid rgba(201,162,39,0.15);font-size:11px;color:var(--gold-dim);letter-spacing:2px;">
+  小不悟 · 织界 IP 顶层设计图谱 · v6.1 &nbsp;|&nbsp; 南京云锦品牌 &nbsp;|&nbsp; 纹样是形，纹灵是意
+</footer>
+
+<script>
+  const navLinks = document.querySelectorAll('.side-nav a');
+  const sections = document.querySelectorAll('.section[id]');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const activeLink = document.querySelector(`.side-nav a[href="#${entry.target.id}"]`);
+        if (activeLink) activeLink.classList.add('active');
+      }
+    });
+  }, { threshold: 0.25 });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
